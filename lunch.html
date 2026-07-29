@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="午餐决定器">
+    <title>🍽️ 午餐决定器 · 今天吃什么？</title>
+    <style>
+        :root {
+            --bg-start: #FFF5EC;
+            --bg-end: #FFE8D6;
+            --card-bg: #FFFFFF;
+            --text-primary: #2D2420;
+            --text-secondary: #6B5E56;
+            --accent: #F4845F;
+            --accent-dark: #E0683E;
+            --gold: #D4A017;
+            --shadow-sm: 0 2px 8px rgba(45, 36, 32, 0.06);
+            --shadow-md: 0 8px 32px rgba(45, 36, 32, 0.10);
+            --shadow-lg: 0 16px 48px rgba(45, 36, 32, 0.14);
+            --radius-sm: 12px;
+            --radius-md: 20px;
+            --radius-lg: 28px;
+            --radius-xl: 36px;
+            --font-display: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+            --font-body: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+            --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            height: 100%;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(160deg, #FFF5EC 0%, #FFECD2 25%, #FFF0E0 50%, #FFE4D0 75%, #FFF5EC 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            color: var(--text-primary);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -120px;
+            right: -80px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 180, 130, 0.25) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -100px;
+            left: -60px;
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle, rgba(255, 200, 150, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .app-header {
+            text-align: center;
+            padding: 4px 0;
+        }
+
+        .app-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .app-title .icon {
+            display: inline-block;
+            font-size: 2.2rem;
+            animation: float-icon 3s ease-in-out infinite;
+        }
+
+        @keyframes float-icon {
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-8px) rotate(5deg);
+            }
+            75% {
+                transform: translateY(-4px) rotate(-3deg);
+            }
+        }
+
+        .app-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 24px 20px 28px;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 22px;
+            position: relative;
+            transition: var(--transition-smooth);
+            border: 1px solid rgba(200, 170, 140, 0.18);
+        }
+
+        .main-card.result-highlight {
+            border-color: rgba(244, 132, 95, 0.4);
+            box-shadow: var(--shadow-lg), 0 0 0 8px rgba(244, 132, 95, 0.06);
+        }
+
+        .category-section {
+            width: 100%;
+            position: relative;
+        }
+
+        .category-label {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            padding-left: 4px;
+        }
+
+        .category-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 4px 2px 10px;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            flex-wrap: nowrap;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
+        }
+
+        .category-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-tag {
+            flex-shrink: 0;
+            padding: 9px 16px;
+            border-radius: 22px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            white-space: nowrap;
+            letter-spacing: 0.02em;
+            transition: var(--transition-fast);
+            border: 1.5px solid #E8DDD4;
+            background: #FDFAF7;
+            color: var(--text-secondary);
+            position: relative;
+            font-family: var(--font-body);
+        }
+
+        .category-tag:active {
+            transform: scale(0.94);
+            transition: transform 0.08s ease;
+        }
+
+        .category-tag.active {
+            background: #2D2420;
+            color: #FFF;
+            border-color: #2D2420;
+            font-weight: 600;
+            box-shadow: 0 4px 14px rgba(45, 36, 32, 0.22);
+            transform: translateY(-1px);
+        }
+
+        .category-tag.tag-all.active {
+            background: #2D2420;
+            border-color: #2D2420;
+        }
+
+        .category-tag.tag-chuan.active {
+            background: #D9443A;
+            border-color: #D9443A;
+            box-shadow: 0 4px 14px rgba(217, 68, 58, 0.3);
+        }
+
+        .category-tag.tag-yue.active {
+            background: #C8960C;
+            border-color: #C8960C;
+            box-shadow: 0 4px 14px rgba(200, 150, 12, 0.3);
+        }
+
+        .category-tag.tag-xiang.active {
+            background: #E8702A;
+            border-color: #E8702A;
+            box-shadow: 0 4px 14px rgba(232, 112, 42, 0.3);
+        }
+
+        .category-tag.tag-lu.active {
+            background: #8B3A3A;
+            border-color: #8B3A3A;
+            box-shadow: 0 4px 14px rgba(139, 58, 58, 0.3);
+        }
+
+        .category-tag.tag-dongbei.active {
+            background: #9E6B4A;
+            border-color: #9E6B4A;
+            box-shadow: 0 4px 14px rgba(158, 107, 74, 0.3);
+        }
+
+        .category-tag.tag-rihan.active {
+            background: #D4787E;
+            border-color: #D4787E;
+            box-shadow: 0 4px 14px rgba(212, 120, 126, 0.3);
+        }
+
+        .category-tag.tag-xishi.active {
+            background: #E8965C;
+            border-color: #E8965C;
+            box-shadow: 0 4px 14px rgba(232, 150, 92, 0.3);
+        }
+
+        .category-tag.tag-dongnanya.active {
+            background: #4A8F6E;
+            border-color: #4A8F6E;
+            box-shadow: 0 4px 14px rgba(74, 143, 110, 0.3);
+        }
+
+        .category-tag.tag-mianshi.active {
+            background: #C8963E;
+            border-color: #C8963E;
+            box-shadow: 0 4px 14px rgba(200, 150, 62, 0.3);
+        }
+
+        .category-tag.tag-kuaican.active {
+            background: #F4845F;
+            border-color: #F4845F;
+            box-shadow: 0 4px 14px rgba(244, 132, 95, 0.3);
+        }
+
+        .category-tag.tag-difang.active {
+            background: #5E7B8B;
+            border-color: #5E7B8B;
+            box-shadow: 0 4px 14px rgba(94, 123, 139, 0.35);
+        }
+
+        .display-window {
+            width: 100%;
+            background: linear-gradient(180deg, #FFFCF9 0%, #FFF8F2 100%);
+            border-radius: var(--radius-md);
+            padding: 20px 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #F0E6DC;
+            transition: var(--transition-smooth);
+            box-shadow: inset 0 2px 8px rgba(45, 36, 32, 0.03);
+        }
+
+        .display-window.rolling {
+            border-color: #FAC8A8;
+            box-shadow: inset 0 2px 12px rgba(244, 132, 95, 0.06), 0 0 0 4px rgba(244, 132, 95, 0.04);
+        }
+
+        .display-window.result {
+            border-color: #F4845F;
+            box-shadow: inset 0 2px 12px rgba(244, 132, 95, 0.06), 0 0 0 6px rgba(244, 132, 95, 0.07), 0 0 30px rgba(244, 132, 95, 0.12);
+            animation: result-glow 1.5s ease-out;
+        }
+
+        @keyframes result-glow {
+            0% {
+                box-shadow: inset 0 2px 12px rgba(244, 132, 95, 0.06), 0 0 0 2px rgba(244, 132, 95, 0.2), 0 0 60px rgba(244, 132, 95, 0.3);
+            }
+            100% {
+                box-shadow: inset 0 2px 12px rgba(244, 132, 95, 0.06), 0 0 0 6px rgba(244, 132, 95, 0.07), 0 0 30px rgba(244, 132, 95, 0.12);
+            }
+        }
+
+        .display-text {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            transition: var(--transition-fast);
+            letter-spacing: 0.03em;
+            line-height: 1.3;
+            word-break: keep-all;
+        }
+
+        .display-text.bouncing {
+            animation: text-bounce 0.08s infinite alternate;
+        }
+
+        @keyframes text-bounce {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-4px);
+            }
+        }
+
+        .display-text.result-pop {
+            animation: pop-in 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes pop-in {
+            0% {
+                transform: scale(0.5);
+                opacity: 0.3;
+            }
+            60% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .display-placeholder {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            color: #C4B8AC;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+        }
+
+        .result-category-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            margin-top: 4px;
+            transition: var(--transition-fast);
+            background: #FDF5EF;
+            color: #8B5E3C;
+            border: 1px solid #F0DCC8;
+        }
+
+        .btn-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-main {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 40px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            border: none;
+            border-radius: var(--radius-xl);
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: var(--font-body);
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            color: #FFF;
+            background: linear-gradient(135deg, #F4845F 0%, #E0683E 100%);
+            box-shadow: 0 6px 24px rgba(244, 132, 95, 0.35);
+            min-width: 200px;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+            white-space: nowrap;
+        }
+
+        .btn-main:hover {
+            box-shadow: 0 8px 30px rgba(244, 132, 95, 0.45);
+            transform: translateY(-2px);
+        }
+
+        .btn-main:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 16px rgba(244, 132, 95, 0.3);
+            transition: transform 0.08s ease, box-shadow 0.08s ease;
+        }
+
+        .btn-main.stop-state {
+            background: linear-gradient(135deg, #E05555 0%, #C0392B 100%);
+            box-shadow: 0 6px 24px rgba(224, 85, 85, 0.35);
+            animation: pulse-stop 0.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse-stop {
+            0%,
+            100% {
+                box-shadow: 0 6px 24px rgba(224, 85, 85, 0.35);
+            }
+            50% {
+                box-shadow: 0 8px 32px rgba(224, 85, 85, 0.55);
+            }
+        }
+
+        .btn-main:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            pointer-events: none;
+            filter: grayscale(15%);
+        }
+
+        .history-section {
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(200, 170, 140, 0.12);
+        }
+
+        .history-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 0.03em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .history-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            list-style: none;
+            max-height: 140px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #E0D5C8 transparent;
+        }
+
+        .history-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background: #E0D5C8;
+            border-radius: 2px;
+        }
+
+        .history-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            background: #FDF8F3;
+            border-radius: 14px;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            border: 1px solid #F0E6DA;
+            font-weight: 500;
+            animation: fade-in-up 0.4s ease-out;
+        }
+
+        @keyframes fade-in-up {
+            0% {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .history-item .hi-emoji {
+            font-size: 0.85rem;
+        }
+
+        .history-empty {
+            font-size: 0.8rem;
+            color: #C4B8AC;
+            font-style: italic;
+        }
+
+        .history-clear {
+            font-size: 0.75rem;
+            color: #B8A89A;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 2px 8px;
+            border-radius: 8px;
+            transition: var(--transition-fast);
+            font-family: var(--font-body);
+            letter-spacing: 0.02em;
+        }
+
+        .history-clear:hover {
+            color: #E05555;
+            background: #FFF0EE;
+        }
+
+        @media (max-width: 400px) {
+            .app-title {
+                font-size: 1.7rem;
+            }
+            .app-title .icon {
+                font-size: 1.9rem;
+            }
+            .display-text {
+                font-size: 1.8rem;
+            }
+            .display-placeholder {
+                font-size: 1.2rem;
+            }
+            .btn-main {
+                padding: 14px 32px;
+                font-size: 1.05rem;
+                min-width: 170px;
+            }
+            .category-tag {
+                padding: 7px 13px;
+                font-size: 0.78rem;
+            }
+            .main-card {
+                padding: 18px 14px 22px;
+                gap: 16px;
+            }
+            .display-window {
+                padding: 16px 12px;
+                min-height: 80px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 520px;
+            }
+            .display-text {
+                font-size: 2.6rem;
+            }
+            .btn-main {
+                padding: 18px 48px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="app-header">
+            <h1 class="app-title">
+                <span class="icon">🍽️</span>午餐决定器
+            </h1>
+            <p class="app-subtitle">纠结星人的救星 · 点击开始随机跳转</p>
+        </header>
+
+        <div class="main-card" id="mainCard">
+            <div class="category-section">
+                <div class="category-label">📌 选择菜系（默认全部）</div>
+                <div class="category-scroll" id="categoryScroll">
+                    <span class="category-tag tag-all active" data-category="全部">🌍 全部</span>
+                    <span class="category-tag tag-chuan" data-category="川菜">🌶️ 川菜</span>
+                    <span class="category-tag tag-yue" data-category="粤菜">🥢 粤菜</span>
+                    <span class="category-tag tag-xiang" data-category="湘菜">🔥 湘菜</span>
+                    <span class="category-tag tag-lu" data-category="鲁菜">🍖 鲁菜</span>
+                    <span class="category-tag tag-dongbei" data-category="东北菜">🥘 东北菜</span>
+                    <span class="category-tag tag-rihan" data-category="日韩料理">🍣 日韩料理</span>
+                    <span class="category-tag tag-xishi" data-category="西式料理">🍝 西式料理</span>
+                    <span class="category-tag tag-dongnanya" data-category="东南亚料理">🍛 东南亚</span>
+                    <span class="category-tag tag-mianshi" data-category="面食粉类">🍜 面食粉类</span>
+                    <span class="category-tag tag-kuaican" data-category="快餐简餐">🍚 快餐简餐</span>
+                    <span class="category-tag tag-difang" data-category="地方特色">🗺️ 地方特色</span>
+                </div>
+            </div>
+
+            <div class="display-window" id="displayWindow">
+                <span class="display-placeholder" id="displayContent">今天吃什么？🤔</span>
+            </div>
+            <div class="result-category-badge" id="resultBadge" style="display:none;"></div>
+
+            <div class="btn-container">
+                <button class="btn-main" id="btnMain" aria-label="开始选择午餐">
+                    <span class="btn-icon">🎰</span> 开始选择
+                </button>
+            </div>
+        </div>
+
+        <div class="history-section" id="historySection">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span class="history-title">📋 最近结果</span>
+                <button class="history-clear" id="btnClearHistory" title="清除历史">清空</button>
+            </div>
+            <ul class="history-list" id="historyList">
+                <span class="history-empty">还没有记录，快来试试吧~</span>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ==================== 数据定义 (超过180种午餐选择) ====================
+            const foodData = [
+                // 川菜 (20)
+                { name: '回锅肉', category: '川菜' }, { name: '鱼香肉丝', category: '川菜' }, { name: '宫保鸡丁',
+                category: '川菜' },
+                { name: '水煮肉片', category: '川菜' }, { name: '麻婆豆腐', category: '川菜' }, { name: '辣子鸡丁',
+                category: '川菜' },
+                { name: '酸菜鱼', category: '川菜' }, { name: '毛血旺', category: '川菜' }, { name: '口水鸡', category: '川菜' },
+                { name: '夫妻肺片', category: '川菜' }, { name: '蒜泥白肉', category: '川菜' }, { name: '干煸四季豆',
+                category: '川菜' },
+                { name: '蚂蚁上树', category: '川菜' }, { name: '鱼香茄子', category: '川菜' }, { name: '水煮鱼',
+                category: '川菜' },
+                { name: '小炒肉', category: '川菜' }, { name: '麻辣香锅', category: '川菜' }, { name: '泡椒牛蛙',
+                category: '川菜' },
+                { name: '钵钵鸡', category: '川菜' }, { name: '椒麻鸡', category: '川菜' },
+                // 粤菜 (15)
+                { name: '白切鸡', category: '粤菜' }, { name: '叉烧饭', category: '粤菜' }, { name: '烧鹅饭', category: '粤菜' },
+                { name: '煲仔饭', category: '粤菜' }, { name: '干炒牛河', category: '粤菜' }, { name: '豉汁蒸排骨',
+                category: '粤菜' },
+                { name: '菠萝咕咾肉', category: '粤菜' }, { name: '梅菜扣肉', category: '粤菜' }, { name: '清蒸鲈鱼',
+                category: '粤菜' },
+                { name: '白灼虾', category: '粤菜' }, { name: '蚝油生菜', category: '粤菜' }, { name: '姜葱炒蟹',
+                category: '粤菜' },
+                { name: '滑蛋牛肉', category: '粤菜' }, { name: '豉油鸡', category: '粤菜' }, { name: '烧肉饭',
+                category: '粤菜' },
+                // 湘菜 (12)
+                { name: '剁椒鱼头', category: '湘菜' }, { name: '辣椒炒肉', category: '湘菜' }, { name: '农家小炒肉',
+                category: '湘菜' },
+                { name: '酸豆角炒肉', category: '湘菜' }, { name: '腊味合蒸', category: '湘菜' }, { name: '小炒黄牛肉',
+                category: '湘菜' },
+                { name: '擂辣椒皮蛋', category: '湘菜' }, { name: '东安鸡', category: '湘菜' }, { name: '永州血鸭',
+                category: '湘菜' },
+                { name: '蒜苗炒腊肉', category: '湘菜' }, { name: '口味虾', category: '湘菜' }, { name: '外婆菜炒蛋',
+                category: '湘菜' },
+                // 鲁菜 (10)
+                { name: '糖醋里脊', category: '鲁菜' }, { name: '葱烧海参', category: '鲁菜' }, { name: '九转大肠',
+                category: '鲁菜' },
+                { name: '爆炒腰花', category: '鲁菜' }, { name: '锅塌豆腐', category: '鲁菜' }, { name: '油焖大虾',
+                category: '鲁菜' },
+                { name: '四喜丸子', category: '鲁菜' }, { name: '京酱肉丝', category: '鲁菜' }, { name: '木须肉',
+                category: '鲁菜' },
+                { name: '黄焖鸡', category: '鲁菜' },
+                // 东北菜 (10)
+                { name: '锅包肉', category: '东北菜' }, { name: '地三鲜', category: '东北菜' }, { name: '猪肉炖粉条',
+                category: '东北菜' },
+                { name: '小鸡炖蘑菇', category: '东北菜' }, { name: '东北大拉皮', category: '东北菜' }, { name: '溜肉段',
+                category: '东北菜' },
+                { name: '酱骨架', category: '东北菜' }, { name: '酸菜白肉', category: '东北菜' }, { name: '溜肝尖',
+                category: '东北菜' },
+                { name: '乱炖', category: '东北菜' },
+                // 日韩料理 (18)
+                { name: '寿司拼盘', category: '日韩料理' }, { name: '刺身定食', category: '日韩料理' }, { name: '豚骨拉面',
+                category: '日韩料理' },
+                { name: '乌冬面', category: '日韩料理' }, { name: '照烧鸡腿饭', category: '日韩料理' }, { name: '鳗鱼饭',
+                category: '日韩料理' },
+                { name: '天妇罗定食', category: '日韩料理' }, { name: '炸猪排饭', category: '日韩料理' }, { name: '石锅拌饭',
+                category: '日韩料理' },
+                { name: '韩式烤肉饭', category: '日韩料理' }, { name: '泡菜炒饭', category: '日韩料理' }, { name: '韩式冷面',
+                category: '日韩料理' },
+                { name: '韩式炸鸡', category: '日韩料理' }, { name: '部队锅', category: '日韩料理' }, { name: '日式咖喱饭',
+                category: '日韩料理' },
+                { name: '牛丼', category: '日韩料理' }, { name: '亲子丼', category: '日韩料理' }, { name: '海鲜丼',
+                category: '日韩料理' },
+                // 西式料理 (15)
+                { name: '意大利肉酱面', category: '西式料理' }, { name: '玛格丽特披萨', category: '西式料理' },
+                { name: '煎牛排配时蔬', category: '西式料理' },
+                { name: '经典汉堡', category: '西式料理' }, { name: '鸡肉三明治', category: '西式料理' }, { name: '凯撒沙拉',
+                category: '西式料理' },
+                { name: '海鲜焗饭', category: '西式料理' }, { name: '香草烤鸡', category: '西式料理' }, { name: '墨西哥卷饼',
+                category: '西式料理' },
+                { name: '香煎三文鱼', category: '西式料理' }, { name: '帕尼尼', category: '西式料理' }, { name: '热狗',
+                category: '西式料理' },
+                { name: '英式炸鱼薯条', category: '西式料理' }, { name: '奶油培根意面', category: '西式料理' },
+                { name: '罗勒青酱意面', category: '西式料理' },
+                // 东南亚料理 (12)
+                { name: '泰式咖喱饭', category: '东南亚料理' }, { name: '越南河粉', category: '东南亚料理' },
+                { name: '印度咖喱配馕', category: '东南亚料理' },
+                { name: '泰式炒河粉', category: '东南亚料理' }, { name: '印尼炒饭', category: '东南亚料理' },
+                { name: '冬阴功汤面', category: '东南亚料理' },
+                { name: '越南春卷', category: '东南亚料理' }, { name: '海南鸡饭', category: '东南亚料理' }, { name: '肉骨茶',
+                category: '东南亚料理' },
+                { name: '泰式打抛猪肉饭', category: '东南亚料理' }, { name: '马来椰浆饭', category: '东南亚料理' },
+                { name: '新加坡叻沙', category: '东南亚料理' },
+                // 面食粉类 (18)
+                { name: '兰州拉面', category: '面食粉类' }, { name: '炸酱面', category: '面食粉类' }, { name: '担担面',
+                category: '面食粉类' },
+                { name: '热干面', category: '面食粉类' }, { name: '刀削面', category: '面食粉类' }, { name: '牛肉面',
+                category: '面食粉类' },
+                { name: '阳春面', category: '面食粉类' }, { name: '馄饨', category: '面食粉类' }, { name: '饺子',
+                category: '面食粉类' },
+                { name: '酸辣粉', category: '面食粉类' }, { name: '螺蛳粉', category: '面食粉类' }, { name: '桂林米粉',
+                category: '面食粉类' },
+                { name: '过桥米线', category: '面食粉类' }, { name: '葱油拌面', category: '面食粉类' },
+                { name: 'biangbiang面', category: '面食粉类' },
+                { name: '臊子面', category: '面食粉类' }, { name: '油泼面', category: '面食粉类' }, { name: '重庆小面',
+                category: '面食粉类' },
+                // 快餐简餐 (20)
+                { name: '黄焖鸡米饭', category: '快餐简餐' }, { name: '隆江猪脚饭', category: '快餐简餐' }, { name: '沙县小吃',
+                category: '快餐简餐' },
+                { name: '盖浇饭', category: '快餐简餐' }, { name: '木桶饭', category: '快餐简餐' }, { name: '蛋炒饭',
+                category: '快餐简餐' },
+                { name: '扬州炒饭', category: '快餐简餐' }, { name: '麻辣烫', category: '快餐简餐' }, { name: '冒菜',
+                category: '快餐简餐' },
+                { name: '卤肉饭', category: '快餐简餐' }, { name: '咖喱鸡饭', category: '快餐简餐' }, { name: '照烧鸡排饭',
+                category: '快餐简餐' },
+                { name: '脆皮鸡饭', category: '快餐简餐' }, { name: '烤肉饭', category: '快餐简餐' }, { name: '鸡排饭',
+                category: '快餐简餐' },
+                { name: '番茄炒蛋盖饭', category: '快餐简餐' }, { name: '红烧排骨饭', category: '快餐简餐' },
+                { name: '土豆烧牛肉饭', category: '快餐简餐' },
+                { name: '香菇滑鸡饭', category: '快餐简餐' }, { name: '鱼香茄子饭', category: '快餐简餐' },
+                // 地方特色 (新增，非八大菜系且极具地方风味的午餐)
+                { name: '新疆大盘鸡拌面', category: '地方特色' }, { name: '手抓饭', category: '地方特色' }, { name: '羊肉泡馍',
+                    category: '地方特色' },
+                { name: '肉夹馍+凉皮', category: '地方特色' }, { name: '煎饼果子', category: '地方特色' }, { name: '烤冷面',
+                    category: '地方特色' },
+                { name: '生煎包', category: '地方特色' }, { name: '小笼包', category: '地方特色' }, { name: '排骨藕汤饭',
+                    category: '地方特色' },
+                { name: '酸汤鱼', category: '地方特色' }, { name: '沙茶面', category: '地方特色' }, { name: '蚵仔煎',
+                    category: '地方特色' },
+                { name: '台湾牛肉面', category: '地方特色' }, { name: '盐酥鸡饭', category: '地方特色' }, { name: '卤煮火烧',
+                    category: '地方特色' },
+                { name: '武汉豆皮', category: '地方特色' }, { name: '糯米鸡', category: '地方特色' }, { name: '鸡蛋肠粉',
+                    category: '地方特色' },
+                { name: '咖喱鱼蛋面', category: '地方特色' }, { name: '炒饼', category: '地方特色' }, { name: '羊肉抓饭',
+                    category: '地方特色' },
+                { name: '胡辣汤配油饼', category: '地方特色' }, { name: '豆汁焦圈', category: '地方特色' }, { name: '炒肝包子',
+                    category: '地方特色' },
+                { name: '天津嘎巴菜', category: '地方特色' }, { name: '潮汕牛肉丸粿条', category: '地方特色' },
+                { name: '客家盐焗鸡饭', category: '地方特色' },
+                { name: '云南汽锅鸡', category: '地方特色' }, { name: '贵州肠旺面', category: '地方特色' },
+                { name: '西藏青稞牦牛肉饭', category: '地方特色' },
+            ];
+
+            const categoryEmoji = {
+                '川菜': '🌶️',
+                '粤菜': '🥢',
+                '湘菜': '🔥',
+                '鲁菜': '🍖',
+                '东北菜': '🥘',
+                '日韩料理': '🍣',
+                '西式料理': '🍝',
+                '东南亚料理': '🍛',
+                '面食粉类': '🍜',
+                '快餐简餐': '🍚',
+                '地方特色': '🗺️',
+            };
+
+            const categoryTagClass = {
+                '川菜': 'tag-chuan',
+                '粤菜': 'tag-yue',
+                '湘菜': 'tag-xiang',
+                '鲁菜': 'tag-lu',
+                '东北菜': 'tag-dongbei',
+                '日韩料理': 'tag-rihan',
+                '西式料理': 'tag-xishi',
+                '东南亚料理': 'tag-dongnanya',
+                '面食粉类': 'tag-mianshi',
+                '快餐简餐': 'tag-kuaican',
+                '地方特色': 'tag-difang',
+            };
+
+            // ==================== DOM元素 ====================
+            const displayWindow = document.getElementById('displayWindow');
+            const displayContent = document.getElementById('displayContent');
+            const resultBadge = document.getElementById('resultBadge');
+            const btnMain = document.getElementById('btnMain');
+            const mainCard = document.getElementById('mainCard');
+            const categoryScroll = document.getElementById('categoryScroll');
+            const categoryTags = categoryScroll.querySelectorAll('.category-tag');
+            const historyList = document.getElementById('historyList');
+            const btnClearHistory = document.getElementById('btnClearHistory');
+
+            // ==================== 状态 ====================
+            let selectedCategory = '全部';
+            let isRolling = false;
+            let isStopping = false;
+            let rollIntervalId = null;
+            let stopSequenceId = null;
+            let currentResult = null;
+            let history = [];
+
+            function init() {
+                loadHistory();
+                renderHistory();
+                bindEvents();
+                updateDisplayPlaceholder();
+            }
+
+            function updateDisplayPlaceholder() {
+                displayContent.textContent = '今天吃什么？🤔';
+                displayContent.className = 'display-placeholder';
+                resultBadge.style.display = 'none';
+                displayWindow.classList.remove('rolling', 'result');
+                mainCard.classList.remove('result-highlight');
+            }
+
+            function getDataPool() {
+                if (selectedCategory === '全部') return foodData;
+                return foodData.filter(item => item.category === selectedCategory);
+            }
+
+            function getRandomItem(pool, excludeName = null) {
+                if (pool.length === 0) return null;
+                if (pool.length === 1) return pool[0];
+                let item;
+                do {
+                    item = pool[Math.floor(Math.random() * pool.length)];
+                } while (excludeName && item.name === excludeName && pool.length > 1);
+                return item;
+            }
+
+            function showRollingItem(item) {
+                displayContent.textContent = item.name;
+                displayContent.className = 'display-text bouncing';
+                resultBadge.style.display = 'none';
+                displayWindow.classList.add('rolling');
+                displayWindow.classList.remove('result');
+                mainCard.classList.remove('result-highlight');
+            }
+
+            function showResult(item) {
+                currentResult = item;
+                displayContent.textContent = item.name;
+                displayContent.className = 'display-text result-pop';
+                displayWindow.classList.remove('rolling');
+                displayWindow.classList.add('result');
+                mainCard.classList.add('result-highlight');
+                const emoji = categoryEmoji[item.category] || '🍽️';
+                resultBadge.textContent = `${emoji} ${item.category}`;
+                resultBadge.style.display = 'inline-flex';
+                resultBadge.className = 'result-category-badge';
+                const tagClass = categoryTagClass[item.category];
+                if (tagClass) resultBadge.classList.add(tagClass);
+                addToHistory(item);
+                renderHistory();
+            }
+
+            function startRolling() {
+                if (isRolling || isStopping) return;
+                const pool = getDataPool();
+                if (pool.length === 0) {
+                    shakeElement(displayWindow);
+                    return;
+                }
+                isRolling = true;
+                isStopping = false;
+                currentResult = null;
+                resultBadge.style.display = 'none';
+                displayWindow.classList.add('rolling');
+                displayWindow.classList.remove('result');
+                mainCard.classList.remove('result-highlight');
+                let lastItemName = null;
+                const rollSpeed = 55;
+                function roll() {
+                    const item = getRandomItem(pool, lastItemName);
+                    if (item) {
+                        lastItemName = item.name;
+                        displayContent.textContent = item.name;
+                        displayContent.className = 'display-text bouncing';
+                    }
+                    rollIntervalId = setTimeout(roll, rollSpeed);
+                }
+                roll();
+                updateButtonState('stop');
+            }
+
+            function stopRolling() {
+                if (!isRolling || isStopping) return;
+                isStopping = true;
+                if (rollIntervalId) {
+                    clearTimeout(rollIntervalId);
+                    rollIntervalId = null;
+                }
+                const pool = getDataPool();
+                let lastItemName = displayContent.textContent;
+                const decelSequence = [60, 60, 70, 80, 90, 110, 140, 180, 240, 320, 440, 600, 850];
+                let stepIndex = 0;
+                function decelStep() {
+                    if (stepIndex >= decelSequence.length) {
+                        finishRolling(pool, lastItemName);
+                        return;
+                    }
+                    const item = getRandomItem(pool, lastItemName);
+                    if (item) {
+                        lastItemName = item.name;
+                        displayContent.textContent = item.name;
+                        displayContent.className = 'display-text bouncing';
+                    }
+                    const delay = decelSequence[stepIndex];
+                    stepIndex++;
+                    stopSequenceId = setTimeout(decelStep, delay);
+                }
+                decelStep();
+                updateButtonState('disabled');
+            }
+
+            function finishRolling(pool, lastItemName) {
+                isRolling = false;
+                isStopping = false;
+                stopSequenceId = null;
+                const finalItem = getRandomItem(pool, lastItemName) || getRandomItem(pool);
+                if (finalItem) {
+                    showResult(finalItem);
+                    if (navigator.vibrate) navigator.vibrate([15, 30, 15]);
+                } else {
+                    updateDisplayPlaceholder();
+                }
+                updateButtonState('restart');
+            }
+
+            function resetAll() {
+                if (rollIntervalId) { clearTimeout(rollIntervalId);
+                    rollIntervalId = null; }
+                if (stopSequenceId) { clearTimeout(stopSequenceId);
+                    stopSequenceId = null; }
+                isRolling = false;
+                isStopping = false;
+                currentResult = null;
+                updateDisplayPlaceholder();
+                updateButtonState('start');
+            }
+
+            function updateButtonState(state) {
+                btnMain.classList.remove('stop-state');
+                btnMain.disabled = false;
+                switch (state) {
+                    case 'start':
+                        btnMain.innerHTML = '<span class="btn-icon">🎰</span> 开始选择';
+                        btnMain.style.background = 'linear-gradient(135deg, #F4845F 0%, #E0683E 100%)';
+                        btnMain.style.boxShadow = '0 6px 24px rgba(244,132,95,0.35)';
+                        break;
+                    case 'stop':
+                        btnMain.innerHTML = '<span class="btn-icon">🛑</span> 停！就这个';
+                        btnMain.style.background = 'linear-gradient(135deg, #E05555 0%, #C0392B 100%)';
+                        btnMain.style.boxShadow = '0 6px 24px rgba(224,85,85,0.35)';
+                        btnMain.classList.add('stop-state');
+                        break;
+                    case 'restart':
+                        btnMain.innerHTML = '<span class="btn-icon">🔄</span> 再来一次';
+                        btnMain.style.background = 'linear-gradient(135deg, #F4845F 0%, #E0683E 100%)';
+                        btnMain.style.boxShadow = '0 6px 24px rgba(244,132,95,0.35)';
+                        break;
+                    case 'disabled':
+                        btnMain.disabled = true;
+                        btnMain.innerHTML = '<span class="btn-icon">⏳</span> 正在决定...';
+                        btnMain.style.background = 'linear-gradient(135deg, #C4B8AC 0%, #A89888 100%)';
+                        btnMain.style.boxShadow = '0 4px 16px rgba(168,152,136,0.3)';
+                        btnMain.classList.remove('stop-state');
+                        break;
+                }
+            }
+
+            function bindEvents() {
+                btnMain.addEventListener('click', handleMainButtonClick);
+                btnMain.addEventListener('touchend', function(e) { e.preventDefault();
+                    handleMainButtonClick(); });
+                categoryTags.forEach(tag => {
+                    tag.addEventListener('click', function(e) {
+                        const category = this.getAttribute('data-category');
+                        if (category === selectedCategory) return;
+                        resetAll();
+                        selectedCategory = category;
+                        updateCategoryTags();
+                        this.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    });
+                    tag.addEventListener('touchend', function(e) {
+                        e.preventDefault();
+                        const category = this.getAttribute('data-category');
+                        if (category === selectedCategory) return;
+                        resetAll();
+                        selectedCategory = category;
+                        updateCategoryTags();
+                        this.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    });
+                });
+                btnClearHistory.addEventListener('click', clearHistory);
+                btnClearHistory.addEventListener('touchend', function(e) { e.preventDefault();
+                    clearHistory(); });
+                document.addEventListener('keydown', function(e) {
+                    if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault();
+                        handleMainButtonClick(); }
+                });
+            }
+
+            function handleMainButtonClick() {
+                if (isStopping) return;
+                if (isRolling) { stopRolling(); } else { resetAll();
+                    setTimeout(() => { startRolling(); }, 50); }
+            }
+
+            function updateCategoryTags() {
+                categoryTags.forEach(tag => {
+                    const cat = tag.getAttribute('data-category');
+                    tag.classList.toggle('active', cat === selectedCategory);
+                });
+            }
+
+            function loadHistory() {
+                try {
+                    const stored = localStorage.getItem('lunch_selector_history');
+                    if (stored) { history = JSON.parse(stored); if (!Array.isArray(history)) history = []; }
+                } catch (e) { history = []; }
+                if (history.length > 10) history = history.slice(-10);
+            }
+
+            function saveHistory() { try { localStorage.setItem('lunch_selector_history', JSON.stringify(
+                    history)); } catch (e) {} }
+
+            function addToHistory(item) {
+                const record = { name: item.name, category: item.category, emoji: categoryEmoji[item.category] ||
+                        '🍽️', time: Date.now() };
+                if (history.length > 0 && history[history.length - 1].name === record.name && history[history
+                        .length - 1].category === record.category) return;
+                history.push(record);
+                if (history.length > 10) history = history.slice(-10);
+                saveHistory();
+            }
+
+            function renderHistory() {
+                if (history.length === 0) {
+                    historyList.innerHTML = '<span class="history-empty">还没有记录，快来试试吧~</span>';
+                } else {
+                    historyList.innerHTML = history.slice().reverse().map((record, index) => {
+                        const timeStr = formatTime(record.time);
+                        return `<li class="history-item" style="animation-delay:${index * 0.04}s" title="${timeStr}">
+                                    <span class="hi-emoji">${record.emoji}</span>
+                                    <span>${record.name}</span>
+                                    <span style="font-size:0.7rem;color:#B8A89A;margin-left:2px;">${record.category}</span>
+                                </li>`;
+                    }).join('');
+                }
+            }
+
+            function clearHistory() { history = [];
+                saveHistory();
+                renderHistory(); if (navigator.vibrate) navigator.vibrate(10); }
+
+            function formatTime(timestamp) {
+                const now = new Date();
+                const date = new Date(timestamp);
+                const isToday = date.toDateString() === now.toDateString();
+                const timeStr = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+                if (isToday) return `今天 ${timeStr}`;
+                const yesterday = new Date(now);
+                yesterday.setDate(yesterday.getDate() - 1);
+                if (date.toDateString() === yesterday.toDateString()) return `昨天 ${timeStr}`;
+                return `${date.getMonth() + 1}/${date.getDate()} ${timeStr}`;
+            }
+
+            function shakeElement(el) {
+                el.style.animation = 'none';
+                el.offsetHeight;
+                el.style.animation = 'shake 0.4s ease';
+                setTimeout(() => { el.style.animation = ''; }, 400);
+            }
+
+            const shakeStyle = document.createElement('style');
+            shakeStyle.textContent =
+                `@keyframes shake { 0%,100% { transform: translateX(0); } 15% { transform: translateX(-6px); } 30% { transform: translateX(6px); } 45% { transform: translateX(-4px); } 60% { transform: translateX(4px); } 75% { transform: translateX(-2px); } 90% { transform: translateX(2px); } }`;
+            document.head.appendChild(shakeStyle);
+
+            init();
+            console.log('🍽️ 午餐决定器已升级！');
+            console.log(`   📊 共加载 ${foodData.length} 道午餐选项 (含地方特色)`);
+            console.log('   🎯 点击按钮开始随机跳转，再次点击停止');
+            console.log('   ⌨️  也可按空格键操作');
+        })();
+    </script>
+</body>
+</html>
