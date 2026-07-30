@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
   <title>工作价值评估器 · 城市精准版</title>
-  <!-- 引入 html2canvas 用于截图分享 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
@@ -16,18 +15,14 @@
       --green: #5a9e6f;
       --green-bg: #edf7f0;
       --yellow: #d4a24e;
-      --yellow-bg: #fef9f0;
       --orange: #d47e4e;
-      --orange-bg: #fef6f0;
       --red: #c55555;
-      --red-bg: #fdf3f3;
       --border: #e8e4df;
       --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
       --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
       --radius-sm: 10px;
       --radius: 16px;
       --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
-      --transition: 0.2s ease;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     html { scroll-behavior:smooth; -webkit-tap-highlight-color:transparent; }
@@ -43,7 +38,6 @@
       display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
     .logo { display:flex; align-items:center; gap:6px; font-weight:700; font-size:1rem; }
-    .logo .icon { font-size:1.4rem; }
     .city-selector {
       display:flex; align-items:center; gap:4px; background:var(--card-bg);
       border:1.5px solid var(--border); border-radius:50px; padding:6px 12px;
@@ -59,15 +53,8 @@
       display:flex; align-items:center; gap:6px; background:var(--card-bg);
       border:1.5px solid var(--border); border-radius:50px; padding:7px 14px;
       box-shadow:var(--shadow-sm); min-width:90px; justify-content:center;
-      transition:all var(--transition);
     }
     .score-pill .score-num { font-size:1.4rem; font-weight:800; font-family:var(--font-mono); }
-    .score-pill .score-label { font-size:0.7rem; color:var(--text-secondary); }
-    .score-pill.glow-green { border-color:var(--green); box-shadow:0 0 0 4px rgba(90,158,111,0.12); }
-    .score-pill.glow-yellow { border-color:var(--yellow); box-shadow:0 0 0 4px rgba(212,162,78,0.12); }
-    .score-pill.glow-orange { border-color:var(--orange); box-shadow:0 0 0 4px rgba(212,126,78,0.12); }
-    .score-pill.glow-red { border-color:var(--red); box-shadow:0 0 0 4px rgba(197,85,85,0.12); }
-
     .main-container { max-width:720px; margin:0 auto; padding:12px 16px 24px; display:flex; flex-direction:column; gap:18px; }
     .section-card {
       background:var(--card-bg); border-radius:var(--radius); padding:18px 16px;
@@ -78,9 +65,8 @@
     .dimension-grid { display:flex; flex-direction:column; gap:10px; }
     .dimension-card {
       background:#fafaf8; border-radius:var(--radius-sm); padding:12px 14px;
-      border:1.5px solid transparent; transition:all var(--transition);
+      border:1.5px solid transparent; transition:all 0.2s;
     }
-    .dimension-card:hover { border-color:#d8d3cc; }
     .dim-card-header { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px; }
     .dim-info { display:flex; align-items:center; gap:8px; min-width:0; flex:1; }
     .dim-icon { font-size:1.3rem; width:32px; height:32px; display:flex; align-items:center; justify-content:center; background:#f0ece6; border-radius:50%; }
@@ -88,14 +74,12 @@
     .dim-desc { font-size:0.68rem; color:var(--text-secondary); }
     .weight-badge { font-size:0.62rem; background:#f0ece6; color:#8a8278; padding:2px 8px; border-radius:20px; font-weight:600; white-space:nowrap; }
     .weight-badge.high-weight { background:#fef3e0; color:#b8781e; }
-    .weight-badge.medium-weight { background:#eaf2f7; color:#4a6d85; }
     .dim-score { font-size:1.3rem; font-weight:800; font-family:var(--font-mono); width:30px; text-align:center; }
     .score-high { color:var(--green); } .score-mid { color:var(--yellow); } .score-low { color:var(--red); }
     .input-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .input-field {
       flex:1; min-width:100px; border:1.5px solid #e0dcd7; border-radius:8px; padding:8px 10px;
       font-size:0.85rem; font-family:var(--font-mono); background:#fff; outline:none;
-      transition:border var(--transition);
     }
     .input-field:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(91,123,148,0.1); }
     .input-unit { font-size:0.75rem; color:var(--text-secondary); white-space:nowrap; }
@@ -109,7 +93,7 @@
     .btn {
       display:inline-flex; align-items:center; gap:6px; padding:10px 20px; border-radius:50px;
       border:1.5px solid var(--border); background:#fff; font-size:0.8rem; font-weight:600;
-      cursor:pointer; color:var(--text-secondary); transition:all var(--transition); font-family:inherit;
+      cursor:pointer; color:var(--text-secondary); transition:all 0.2s; font-family:inherit;
     }
     .btn:hover { background:#f9f7f4; border-color:#c5bfb6; color:var(--text); }
     .btn:active { transform:scale(0.96); }
@@ -124,7 +108,6 @@
     .score-ring-fg { fill:none; stroke-width:9; stroke-linecap:round; transition: stroke-dashoffset 0.5s ease, stroke 0.4s; }
     .score-ring-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
     .big-score { font-size:2.8rem; font-weight:900; font-family:var(--font-mono); line-height:1; }
-    .out-of { font-size:0.7rem; color:var(--text-secondary); }
     .grade-badge {
       font-size:1.1rem; font-weight:700; padding:6px 18px; border-radius:50px; text-align:center;
       display:inline-block; margin-bottom:4px;
@@ -135,26 +118,38 @@
 
     .bar-chart { display:flex; flex-direction:column; gap:6px; margin-top:6px; }
     .bar-row { display:flex; align-items:center; gap:8px; font-size:0.75rem; }
-    .bar-label { width:75px; flex-shrink:0; text-align:right; font-weight:600; font-size:0.7rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .bar-label { width:75px; flex-shrink:0; text-align:right; font-weight:600; font-size:0.7rem; }
     .bar-track { flex:1; height:8px; background:#eae6e0; border-radius:10px; overflow:hidden; }
-    .bar-fill { height:100%; border-radius:10px; transition:width 0.5s ease, background 0.4s; }
-    .bar-val { width:24px; font-weight:700; font-family:var(--font-mono); font-size:0.75rem; text-align:left; }
+    .bar-fill { height:100%; border-radius:10px; transition:width 0.5s ease; }
+    .bar-val { width:24px; font-weight:700; font-family:var(--font-mono); font-size:0.75rem; }
 
     .insight-grid { display:flex; flex-direction:column; gap:8px; margin-top:6px; }
     .insight-item { display:flex; gap:8px; padding:10px 12px; border-radius:var(--radius-sm); font-size:0.8rem; }
     .insight-item.strength { background:var(--green-bg); border-left:3px solid var(--green); }
-    .insight-item.weakness { background:var(--red-bg); border-left:3px solid var(--red); }
+    .insight-item.weakness { background:#fdf3f3; border-left:3px solid var(--red); }
     .advice-box { background:#fafcfe; border-radius:var(--radius-sm); padding:14px; border:1px solid #dce6f0; font-size:0.8rem; margin-top:8px; }
-    .advice-title { font-weight:700; margin-bottom:6px; font-size:0.85rem; }
     .humor-quote { font-style:italic; color:#b0552a; font-weight:600; margin-top:6px; text-align:center; }
 
     .share-buttons { display:flex; gap:10px; justify-content:center; margin-top:12px; flex-wrap:wrap; }
-    .loading-overlay {
-      position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.7);
-      display:flex; align-items:center; justify-content:center; z-index:999; font-weight:700;
-      backdrop-filter:blur(4px); transition:opacity 0.3s; pointer-events:none; opacity:0;
+
+    /* 纯净分享卡片样式 */
+    .share-card-overlay {
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      background: white; z-index: 9999; display:flex; align-items:center;
+      justify-content:center; flex-direction:column; padding:20px;
     }
-    .loading-overlay.active { opacity:1; pointer-events:auto; }
+    .share-card {
+      width: 320px; background: white; border-radius: 24px; padding: 30px 20px;
+      text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+    }
+    .share-card .app-name { font-size: 0.9rem; color: #888; margin-bottom: 10px; }
+    .share-card .city-tag { background: #f0ece6; display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.8rem; margin-bottom: 15px; }
+    .share-card .score-large { font-size: 4rem; font-weight: 900; font-family: var(--font-mono); line-height: 1; }
+    .share-card .total-label { font-size: 1rem; color: #666; }
+    .share-card .grade-text { font-size: 1.5rem; font-weight: 700; margin: 10px 0; }
+    .share-card .humor { font-style: italic; color: #b0552a; font-weight: 600; margin: 10px 0; }
+    .share-card .footer { margin-top: 15px; font-size: 0.7rem; color: #aaa; }
 
     @media(min-width:640px){
       .dimension-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
@@ -167,10 +162,8 @@
   </style>
 </head>
 <body>
-  <div class="loading-overlay" id="loadingOverlay">⏳ 正在获取城市最新薪资数据...</div>
-
   <header class="app-header">
-    <div class="logo"><span class="icon">💼</span><span>工作价值评估</span></div>
+    <div class="logo"><span>💼</span><span>工作价值评估</span></div>
     <div class="city-selector">
       <span>📍</span>
       <select id="citySelect">
@@ -181,7 +174,6 @@
       </select>
     </div>
     <div class="score-pill" id="scorePill">
-      <span class="score-label">总分</span>
       <span class="score-num" id="headerScore">50</span>
     </div>
   </header>
@@ -203,7 +195,7 @@
       <div class="result-hero">
         <div class="score-ring-container">
           <svg viewBox="0 0 130 130"><circle class="score-ring-bg" cx="65" cy="65" r="58"/><circle class="score-ring-fg" id="scoreRing" cx="65" cy="65" r="58" stroke="#5b7b94" stroke-dasharray="364.4" stroke-dashoffset="182"/></svg>
-          <div class="score-ring-center"><div class="big-score" id="resultBigScore">50</div><div class="out-of">/ 100 分</div></div>
+          <div class="score-ring-center"><div class="big-score" id="resultBigScore">50</div></div>
         </div>
         <div class="grade-badge grade-c" id="resultGrade">🤔 勉强及格</div>
         <div class="humor-quote" id="humorQuote"></div>
@@ -218,58 +210,32 @@
       </div>
       <div class="share-buttons">
         <button class="btn" id="btnShare">📤 分享结果</button>
-        <button class="btn btn-primary" id="btnScreenshot">📸 保存截图</button>
+        <button class="btn btn-primary" id="btnScreenshot">📸 保存纯净卡片</button>
       </div>
     </div>
   </div>
 
   <script>
     (function() {
-      // ---------- 模拟API：城市实时薪资数据 (可通过真实API替换) ----------
-      const CITY_API_ENDPOINT = 'https://api.example.com/city-salary'; // 示例端点
-      // 内置备用数据，模拟API返回结构
       const FALLBACK_CITY_DATA = {
-        '北京': { avgSalary: 38000, commuteBase: 18, commuteStep: 6, costIndex: 1.2 },
-        '上海': { avgSalary: 37000, commuteBase: 18, commuteStep: 6, costIndex: 1.2 },
-        '广州': { avgSalary: 32000, commuteBase: 16, commuteStep: 5, costIndex: 1.0 },
-        '深圳': { avgSalary: 36000, commuteBase: 18, commuteStep: 6, costIndex: 1.1 },
-        '杭州': { avgSalary: 30000, commuteBase: 15, commuteStep: 5, costIndex: 1.0 },
-        '成都': { avgSalary: 27000, commuteBase: 14, commuteStep: 4, costIndex: 0.9 },
-        '武汉': { avgSalary: 26000, commuteBase: 14, commuteStep: 4, costIndex: 0.85 },
-        '南京': { avgSalary: 29000, commuteBase: 15, commuteStep: 5, costIndex: 0.95 },
-        '长沙': { avgSalary: 24000, commuteBase: 12, commuteStep: 3, costIndex: 0.8 },
-        '厦门': { avgSalary: 26000, commuteBase: 14, commuteStep: 4, costIndex: 0.9 },
-        '其他': { avgSalary: 22000, commuteBase: 12, commuteStep: 4, costIndex: 0.8 }
+        '北京': { avgSalary: 38000, commuteBase: 18, commuteStep: 6 },
+        '上海': { avgSalary: 37000, commuteBase: 18, commuteStep: 6 },
+        '广州': { avgSalary: 32000, commuteBase: 16, commuteStep: 5 },
+        '深圳': { avgSalary: 36000, commuteBase: 18, commuteStep: 6 },
+        '杭州': { avgSalary: 30000, commuteBase: 15, commuteStep: 5 },
+        '成都': { avgSalary: 27000, commuteBase: 14, commuteStep: 4 },
+        '武汉': { avgSalary: 26000, commuteBase: 14, commuteStep: 4 },
+        '南京': { avgSalary: 29000, commuteBase: 15, commuteStep: 5 },
+        '长沙': { avgSalary: 24000, commuteBase: 12, commuteStep: 3 },
+        '厦门': { avgSalary: 26000, commuteBase: 14, commuteStep: 4 },
+        '其他': { avgSalary: 22000, commuteBase: 12, commuteStep: 4 }
       };
-      let currentCityData = FALLBACK_CITY_DATA['深圳']; // 默认
+      let currentCityData = FALLBACK_CITY_DATA['深圳'];
 
-      // 模拟API调用 (展示对接过程)
-      async function fetchCityData(cityName) {
-        document.getElementById('loadingOverlay').classList.add('active');
-        try {
-          // 实际项目中替换为真实API请求:
-          // const response = await fetch(`${CITY_API_ENDPOINT}?city=${encodeURIComponent(cityName)}`);
-          // const data = await response.json();
-          // 这里使用模拟延迟和内置数据
-          await new Promise(resolve => setTimeout(resolve, 300));
-          const data = FALLBACK_CITY_DATA[cityName] || FALLBACK_CITY_DATA['其他'];
-          currentCityData = data;
-          console.log(`[API模拟] 已获取${cityName}薪资数据:`, data);
-          return data;
-        } catch (error) {
-          console.warn('API获取失败，使用内置数据', error);
-          currentCityData = FALLBACK_CITY_DATA[cityName] || FALLBACK_CITY_DATA['其他'];
-          return currentCityData;
-        } finally {
-          document.getElementById('loadingOverlay').classList.remove('active');
-        }
-      }
-
-      // ---------- 维度定义 ----------
       const dimensions = [
-        { id: 'salary', icon: '💰', name: '月薪（税前）', desc: '单位：元', weight: 2.0, type: 'number', placeholder: '例如 15000', unit: '元', cityAdjust: true },
-        { id: 'overtime', icon: '⚖️', name: '每周加班', desc: '小时数', weight: 1.5, type: 'number', placeholder: '例如 5', unit: '小时', min: 0, max: 40 },
-        { id: 'commute', icon: '🚇', name: '单程通勤', desc: '分钟数', weight: 1.0, type: 'number', placeholder: '例如 40', unit: '分钟', cityAdjust: true, min: 1, max: 180 },
+        { id: 'salary', icon: '💰', name: '月薪（税前）', weight: 2.0, type: 'number', placeholder: '例如 15000', unit: '元' },
+        { id: 'overtime', icon: '⚖️', name: '每周加班', weight: 1.5, type: 'number', placeholder: '例如 5', unit: '小时', min:0, max:40 },
+        { id: 'commute', icon: '🚇', name: '单程通勤', weight: 1.0, type: 'number', placeholder: '例如 40', unit: '分钟', min:1, max:180 },
         { id: 'growth', icon: '📈', name: '成长空间', weight: 1.5, type: 'select', options: ['几乎没有','较少','一般','较好','非常好'] },
         { id: 'interest', icon: '❤️', name: '工作兴趣', weight: 1.0, type: 'select', options: ['非常讨厌','不喜欢','一般','喜欢','充满热情'] },
         { id: 'team', icon: '🤝', name: '团队氛围', weight: 0.8, type: 'select', options: ['勾心斗角','比较冷漠','一般','比较融洽','非常融洽'] },
@@ -279,65 +245,43 @@
         { id: 'autonomy', icon: '🕊️', name: '工作自主权', weight: 0.3, type: 'select', options: ['完全被管控','较多限制','一般','比较自由','高度自由'] }
       ];
 
-      const totalWeight = dimensions.reduce((s,d)=>s+d.weight,0);
       const userInput = {};
       dimensions.forEach(d => {
         if (d.type === 'number') {
           if (d.id === 'salary') userInput[d.id] = 15000;
           else if (d.id === 'overtime') userInput[d.id] = 5;
           else if (d.id === 'commute') userInput[d.id] = 40;
-        } else {
-          userInput[d.id] = 2;
-        }
+        } else userInput[d.id] = 2;
       });
 
-      const dimensionGrid = document.getElementById('dimensionGrid');
-      const barChart = document.getElementById('barChart');
-      const insightGrid = document.getElementById('insightGrid');
-      const adviceContent = document.getElementById('adviceContent');
-      const humorQuote = document.getElementById('humorQuote');
-      const scoreRing = document.getElementById('scoreRing');
-      const resultBigScore = document.getElementById('resultBigScore');
-      const resultGrade = document.getElementById('resultGrade');
-      const headerScore = document.getElementById('headerScore');
-      const scorePill = document.getElementById('scorePill');
-      const citySelect = document.getElementById('citySelect');
-      const circumference = 2 * Math.PI * 58;
-
-      // 计算维度得分
-      function computeDimensionScore(dim, value) {
+      function computeScore(dim, value) {
         if (dim.type === 'number') {
           if (dim.id === 'salary') {
-            const avg = currentCityData.avgSalary || 25000;
-            let raw = (value / avg) * 10;
+            let raw = (value / currentCityData.avgSalary) * 10;
             return Math.min(10, Math.max(1, Math.round(raw)));
           }
           if (dim.id === 'overtime') {
-            const hrs = parseFloat(value) || 0;
-            let score = 10 - hrs * 1.2;
+            let score = 10 - (parseFloat(value)||0) * 1.2;
             return Math.min(10, Math.max(1, Math.round(score)));
           }
           if (dim.id === 'commute') {
-            const mins = parseFloat(value) || 0;
-            const base = currentCityData.commuteBase || 15;
-            const step = currentCityData.commuteStep || 5;
+            const mins = parseFloat(value)||0;
+            const base = currentCityData.commuteBase;
+            const step = currentCityData.commuteStep;
             if (mins <= base) return 10;
-            const extra = mins - base;
-            const deduction = Math.ceil(extra / step);
-            return Math.max(1, 10 - deduction);
+            return Math.max(1, 10 - Math.ceil((mins-base)/step));
           }
         }
         if (dim.type === 'select') {
-          const idx = parseInt(value);
-          const map = [1, 3, 5, 7, 10];
-          return map[idx] || 5;
+          const map = [1,3,5,7,10];
+          return map[parseInt(value)] || 5;
         }
         return 5;
       }
 
       function calculateAllScores() {
         const scores = {};
-        dimensions.forEach(d => scores[d.id] = computeDimensionScore(d, userInput[d.id]));
+        dimensions.forEach(d => scores[d.id] = computeScore(d, userInput[d.id]));
         return scores;
       }
 
@@ -348,148 +292,112 @@
       }
 
       function getGradeInfo(score) {
-        if (score >= 90) return { grade:'S', label:'🏆 梦中情工！快锁死', cssClass:'grade-s', ringColor:'#5a9e6f', pillGlow:'glow-green', humor:'“这工作，老板怕不是慈善家。”', summary:'综合评分极高，各方面都令人满意，是一份难得的好工作。' };
-        if (score >= 78) return { grade:'A', label:'👍 挺香的，可以冲', cssClass:'grade-a', ringColor:'#5a9e6f', pillGlow:'glow-green', humor:'“已经打败了80%的打工人。”', summary:'整体表现优秀，值得长期投入。' };
-        if (score >= 65) return { grade:'B', label:'🍗 鸡肋，但能啃', cssClass:'grade-b', ringColor:'#5b7b94', pillGlow:'', humor:'“食之无味，弃之可惜，说的就是它。”', summary:'还不错，但有些维度差强人意，可以再观望或争取改善。' };
-        if (score >= 50) return { grade:'C', label:'🤔 为五斗米折腰', cssClass:'grade-c', ringColor:'#d4a24e', pillGlow:'glow-yellow', humor:'“你的灵魂正在角落里叹气。”', summary:'处于及格线，有明显短板。如果高权重维度得分低，需慎重考虑。' };
-        if (score >= 35) return { grade:'D', label:'🐶 狗都不去！快逃', cssClass:'grade-d', ringColor:'#d47e4e', pillGlow:'glow-orange', humor:'“别问了，问就是快跑。”', summary:'多个维度不及格，这份工作可能正在消耗你，建议尽早寻找下家。' };
-        if (score >= 20) return { grade:'E', label:'⚡ 渡劫模式', cssClass:'grade-e', ringColor:'#c55555', pillGlow:'glow-red', humor:'“施主，这份工是在修炼心性吗？”', summary:'大部分维度都很糟糕，继续下去身心健康堪忧。' };
-        return { grade:'F', label:'💀 这福气给你要不要', cssClass:'grade-f', ringColor:'#c55555', pillGlow:'glow-red', humor:'“建议直接开摆，或者报警。”', summary:'几乎一无是处，立刻启动离职计划！' };
+        if (score >= 90) return { grade:'S', label:'🏆 梦中情工！快锁死', cssClass:'grade-s', ringColor:'#5a9e6f', humor:'“这工作，老板怕不是慈善家。”' };
+        if (score >= 78) return { grade:'A', label:'👍 挺香的，可以冲', cssClass:'grade-a', ringColor:'#5a9e6f', humor:'“已经打败了80%的打工人。”' };
+        if (score >= 65) return { grade:'B', label:'🍗 鸡肋，但能啃', cssClass:'grade-b', ringColor:'#5b7b94', humor:'“食之无味，弃之可惜。”' };
+        if (score >= 50) return { grade:'C', label:'🤔 为五斗米折腰', cssClass:'grade-c', ringColor:'#d4a24e', humor:'“你的灵魂正在角落里叹气。”' };
+        if (score >= 35) return { grade:'D', label:'🐶 狗都不去！快逃', cssClass:'grade-d', ringColor:'#d47e4e', humor:'“别问了，问就是快跑。”' };
+        if (score >= 20) return { grade:'E', label:'⚡ 渡劫模式', cssClass:'grade-e', ringColor:'#c55555', humor:'“施主，这份工是在修炼心性吗？”' };
+        return { grade:'F', label:'💀 这福气给你要不要', cssClass:'grade-f', ringColor:'#c55555', humor:'“建议直接开摆，或者报警。”' };
       }
+
+      const elements = {
+        headerScore: document.getElementById('headerScore'),
+        resultBigScore: document.getElementById('resultBigScore'),
+        resultGrade: document.getElementById('resultGrade'),
+        humorQuote: document.getElementById('humorQuote'),
+        scoreRing: document.getElementById('scoreRing'),
+        barChart: document.getElementById('barChart'),
+        insightGrid: document.getElementById('insightGrid'),
+        adviceContent: document.getElementById('adviceContent'),
+        citySelect: document.getElementById('citySelect')
+      };
+      const circumference = 2 * Math.PI * 58;
 
       function updateUI() {
         const scores = calculateAllScores();
         const total = calculateTotal(scores);
-        const gradeInfo = getGradeInfo(total);
+        const grade = getGradeInfo(total);
 
-        headerScore.textContent = total;
-        scorePill.classList.remove('glow-green','glow-yellow','glow-orange','glow-red');
-        if (gradeInfo.pillGlow) scorePill.classList.add(gradeInfo.pillGlow);
-        headerScore.style.color = gradeInfo.ringColor;
+        elements.headerScore.textContent = total;
+        elements.resultBigScore.textContent = total;
+        elements.resultBigScore.style.color = grade.ringColor;
+        elements.scoreRing.setAttribute('stroke-dasharray', circumference);
+        elements.scoreRing.setAttribute('stroke-dashoffset', circumference * (1 - total/100));
+        elements.scoreRing.setAttribute('stroke', grade.ringColor);
+        elements.resultGrade.textContent = grade.label;
+        elements.resultGrade.className = 'grade-badge ' + grade.cssClass;
+        elements.humorQuote.textContent = '“' + grade.humor + '”';
 
-        resultBigScore.textContent = total;
-        resultBigScore.style.color = gradeInfo.ringColor;
-        const offset = circumference * (1 - total / 100);
-        scoreRing.setAttribute('stroke-dasharray', circumference);
-        scoreRing.setAttribute('stroke-dashoffset', offset);
-        scoreRing.setAttribute('stroke', gradeInfo.ringColor);
-
-        resultGrade.textContent = gradeInfo.label;
-        resultGrade.className = 'grade-badge ' + gradeInfo.cssClass;
-        humorQuote.textContent = '“' + gradeInfo.humor + '”';
-
-        updateBarChart(scores);
-        updateInsights(scores, total, gradeInfo);
-        updateAdvice(total, gradeInfo, scores);
-
-        dimensions.forEach(d => {
-          const scoreSpan = document.getElementById('dimScore_'+d.id);
-          if (scoreSpan) {
-            const s = scores[d.id];
-            scoreSpan.textContent = s;
-            scoreSpan.className = 'dim-score ' + (s>=8?'score-high':s>=5?'score-mid':'score-low');
-          }
-        });
-      }
-
-      function updateBarChart(scores) {
+        // 条形图
         const sorted = [...dimensions].sort((a,b)=>scores[b.id]-scores[a.id]);
-        barChart.innerHTML = sorted.map(d=>{
+        elements.barChart.innerHTML = sorted.map(d=>{
           const s = scores[d.id];
-          const pct = s*10;
-          let barColor = s>=8?'#5a9e6f':s>=6?'#7aaf8d':s>=5?'#d4a24e':s>=3?'#d47e4e':'#c55555';
-          return `<div class="bar-row"><span class="bar-label">${d.icon} ${d.name}</span><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${barColor};"></div></div><span class="bar-val" style="color:${barColor}">${s}</span></div>`;
+          return `<div class="bar-row"><span class="bar-label">${d.icon} ${d.name}</span><div class="bar-track"><div class="bar-fill" style="width:${s*10}%;background:${s>=8?'#5a9e6f':s>=5?'#d4a24e':'#c55555'};"></div></div><span class="bar-val">${s}</span></div>`;
         }).join('');
-      }
 
-      function updateInsights(scores, total, gradeInfo) {
+        // 洞察
         const strengths = dimensions.filter(d=>scores[d.id]>=8);
         const weaknesses = dimensions.filter(d=>scores[d.id]<=4);
-        let html = '';
-        if(strengths.length){
-          html += strengths.map(d=>`<div class="insight-item strength"><span>✅</span><span><strong>${d.name}</strong> 得分较高（${scores[d.id]}分），是这份工作的亮点。</span></div>`).join('');
-        } else {
-          html += `<div class="insight-item strength" style="opacity:0.7;"><span>📝</span><span>暂无突出优势项（≥8分），可以思考哪些方面还算不错。</span></div>`;
-        }
-        if(weaknesses.length){
-          html += weaknesses.map(d=>`<div class="insight-item weakness"><span>⚠️</span><span><strong>${d.name}</strong> 仅${scores[d.id]}分，权重${d.weight}，严重拖分。</span></div>`).join('');
-        } else {
-          html += `<div class="insight-item weakness" style="opacity:0.6;border-left-color:#ccc;background:#fafaf8;"><span>👍</span><span>暂无严重短板（所有维度≥5分），保持均衡。</span></div>`;
-        }
-        insightGrid.innerHTML = html;
+        let insightHtml = '';
+        if(strengths.length) insightHtml += strengths.map(d=>`<div class="insight-item strength"><span>✅</span><span><strong>${d.name}</strong> 得分${scores[d.id]}，亮点。</span></div>`).join('');
+        else insightHtml += `<div class="insight-item strength" style="opacity:0.7;"><span>📝</span><span>暂无突出优势。</span></div>`;
+        if(weaknesses.length) insightHtml += weaknesses.map(d=>`<div class="insight-item weakness"><span>⚠️</span><span><strong>${d.name}</strong> 仅${scores[d.id]}分，拖分严重。</span></div>`).join('');
+        else insightHtml += `<div class="insight-item weakness" style="opacity:0.6;background:#fafaf8;border-left-color:#ccc;"><span>👍</span><span>暂无严重短板。</span></div>`;
+        elements.insightGrid.innerHTML = insightHtml;
+
+        let advice = '';
+        if (total>=78) advice = '整体优秀，可关注得分稍低维度。';
+        else if (total>=65) advice = '还不错，但需评估短板是否可接受。';
+        else if (total>=50) advice = '处于临界，高权重维度若低分别犹豫。';
+        else if (total>=35) advice = '建议作为过渡，积极寻找新机会。';
+        else advice = '请优先保护身心健康，制定离职计划。';
+        elements.adviceContent.innerHTML = `<p>${advice}</p>`;
       }
 
-      function updateAdvice(total, gradeInfo, scores) {
-        const highWeightWeak = dimensions.filter(d=>d.weight>=1.0 && scores[d.id]<=4);
-        let advice = `<p>${gradeInfo.summary}</p>`;
-        if (total >= 78) advice += '<p>🎯 你可以关注那些得分稍低的维度，看看能否通过沟通进一步优化体验。</p>';
-        else if (total >= 65) advice += '<p>📋 建议重点关注得分低于6分的维度，评估这些短板是否可接受或可改变。</p>';
-        else if (total >= 50) advice += '<p>⚖️ 若薪资、成长、生活平衡等高权重维度偏低，认真考虑是否值得继续。可尝试与上级沟通，同时留意其他机会。</p>';
-        else if (total >= 35) advice += '<p>🚩 建议将这份工作视为过渡，积极寻找更合适的机会，同时积累资源。</p>';
-        else advice += '<p>🆘 优先保护自己的身心健康，设定明确的离职时间线。</p>';
-        if (highWeightWeak.length) advice += `<p style="color:#b0552a;margin-top:6px;">⚠️ 特别注意：${highWeightWeak.map(d=>d.name).join('、')}属于高权重但得分很低，对总分影响巨大。</p>`;
-        const gap = 100 - total;
-        if (gap >= 25) advice += `<p style="color:var(--text-secondary);">📉 当前与满分差距<strong>${gap}分</strong>，主要拖分项见上方条形图。</p>`;
-        adviceContent.innerHTML = advice;
-      }
-
-      // 构建卡片
+      // 构建输入卡片
       function buildCards() {
-        dimensionGrid.innerHTML = '';
+        const grid = document.getElementById('dimensionGrid');
+        grid.innerHTML = '';
         dimensions.forEach(dim => {
           const card = document.createElement('div');
           card.className = 'dimension-card';
           let inputHtml = '';
           if (dim.type === 'number') {
-            inputHtml = `<div class="input-row">
-              <input type="number" class="input-field" id="input_${dim.id}" placeholder="${dim.placeholder||''}" value="${userInput[dim.id]}" step="${dim.id==='salary'?1000:1}" min="${dim.min||0}" max="${dim.max||''}">
-              <span class="input-unit">${dim.unit||''}</span>
-            </div>`;
+            inputHtml = `<div class="input-row"><input type="number" class="input-field" id="input_${dim.id}" value="${userInput[dim.id]}" step="${dim.id==='salary'?1000:1}" min="${dim.min||0}" max="${dim.max||''}"><span class="input-unit">${dim.unit||''}</span></div>`;
           } else {
-            const opts = dim.options.map((opt, idx) => `<option value="${idx}" ${userInput[dim.id]==idx?'selected':''}>${opt}</option>`).join('');
+            const opts = dim.options.map((o,i)=>`<option value="${i}" ${userInput[dim.id]==i?'selected':''}>${o}</option>`).join('');
             inputHtml = `<select class="select-field" id="input_${dim.id}">${opts}</select>`;
           }
-          card.innerHTML = `
-            <div class="dim-card-header">
-              <div class="dim-info"><div class="dim-icon">${dim.icon}</div><div><div class="dim-name">${dim.name}</div><div class="dim-desc">${dim.desc||''}</div></div></div>
-              <span class="weight-badge ${dim.weight>=1.5?'high-weight':'medium-weight'}">权重${dim.weight.toFixed(1)}</span>
-              <span class="dim-score score-mid" id="dimScore_${dim.id}">5</span>
-            </div>
-            ${inputHtml}
-          `;
-          dimensionGrid.appendChild(card);
-
+          card.innerHTML = `<div class="dim-card-header"><div class="dim-info"><div class="dim-icon">${dim.icon}</div><div><div class="dim-name">${dim.name}</div></div></div><span class="weight-badge ${dim.weight>=1.5?'high-weight':'medium-weight'}">权重${dim.weight}</span><span class="dim-score" id="dimScore_${dim.id}">5</span></div>${inputHtml}`;
+          grid.appendChild(card);
           const inputEl = card.querySelector(`#input_${dim.id}`);
-          inputEl.addEventListener('input', function() {
+          inputEl.addEventListener('input', function(){
             if (dim.type === 'number') {
               let val = parseFloat(this.value) || 0;
               if (dim.min !== undefined && val < dim.min) val = dim.min;
               userInput[dim.id] = val;
-            } else {
-              userInput[dim.id] = parseInt(this.value);
-            }
+            } else userInput[dim.id] = parseInt(this.value);
             updateUI();
           });
         });
       }
 
-      // 城市切换事件
-      citySelect.addEventListener('change', async () => {
-        await fetchCityData(citySelect.value);
+      // 城市切换
+      elements.citySelect.addEventListener('change', () => {
+        currentCityData = FALLBACK_CITY_DATA[elements.citySelect.value] || FALLBACK_CITY_DATA['其他'];
         updateUI();
       });
 
       // 重置
-      document.getElementById('btnReset').addEventListener('click', async ()=>{
-        userInput.salary = 15000;
-        userInput.overtime = 5;
-        userInput.commute = 40;
+      document.getElementById('btnReset').addEventListener('click', ()=>{
+        userInput.salary=15000; userInput.overtime=5; userInput.commute=40;
         dimensions.forEach(d=>{ if(d.type==='select') userInput[d.id]=2; });
-        document.getElementById('input_salary').value = 15000;
-        document.getElementById('input_overtime').value = 5;
-        document.getElementById('input_commute').value = 40;
-        dimensions.forEach(d=>{ if(d.type==='select') document.getElementById('input_'+d.id).value = 2; });
-        await fetchCityData(citySelect.value);
+        document.getElementById('input_salary').value=15000;
+        document.getElementById('input_overtime').value=5;
+        document.getElementById('input_commute').value=40;
+        dimensions.forEach(d=>{ if(d.type==='select') document.getElementById('input_'+d.id).value=2; });
+        currentCityData = FALLBACK_CITY_DATA[elements.citySelect.value] || FALLBACK_CITY_DATA['其他'];
         updateUI();
         document.getElementById('ratingSection').scrollIntoView({behavior:'smooth'});
       });
@@ -498,48 +406,59 @@
         document.getElementById('resultSection').scrollIntoView({behavior:'smooth'});
       });
 
-      // ---------- 分享功能 ----------
+      // ---------- 分享功能优化 ----------
       document.getElementById('btnShare').addEventListener('click', async ()=>{
         const total = calculateTotal(calculateAllScores());
-        const gradeInfo = getGradeInfo(total);
-        const shareText = `【工作价值评估】我在${citySelect.value}的工作得分：${total}/100分 ${gradeInfo.label} ${gradeInfo.humor}`;
+        const grade = getGradeInfo(total);
+        const city = elements.citySelect.value;
+        const shareText = `【工作价值评估】我在${city}的这份工作得分：${total}/100分 ${grade.label} —— ${grade.humor}`;
         if (navigator.share) {
           try {
             await navigator.share({ title: '工作价值评估', text: shareText, url: window.location.href });
           } catch (e) { console.log('分享取消'); }
         } else {
           await navigator.clipboard.writeText(shareText);
-          alert('结果已复制到剪贴板，可以粘贴分享给朋友！');
+          alert('结果已复制，可直接粘贴分享给好友！');
         }
       });
 
-      // 截图保存
-      document.getElementById('btnScreenshot').addEventListener('click', async function(){
-        const element = document.getElementById('resultSection');
+      // 纯净卡片截图
+      document.getElementById('btnScreenshot').addEventListener('click', async ()=>{
+        const total = calculateTotal(calculateAllScores());
+        const grade = getGradeInfo(total);
+        const city = elements.citySelect.value;
+        // 创建纯净分享卡片
+        const overlay = document.createElement('div');
+        overlay.className = 'share-card-overlay';
+        overlay.innerHTML = `
+          <div class="share-card">
+            <div class="app-name">💼 工作价值评估</div>
+            <div class="city-tag">📍 ${city}</div>
+            <div class="score-large" style="color:${grade.ringColor}">${total}</div>
+            <div class="total-label">/ 100 分</div>
+            <div class="grade-text" style="color:${grade.ringColor}">${grade.label}</div>
+            <div class="humor">“${grade.humor}”</div>
+            <div class="footer">${new Date().toLocaleDateString()} · 数据仅供参考</div>
+          </div>
+        `;
+        document.body.appendChild(overlay);
         try {
-          const canvas = await html2canvas(element, {
-            scale: 2,
-            backgroundColor: '#ffffff',
-            allowTaint: false,
-            useCORS: true,
-            logging: false
-          });
+          const canvas = await html2canvas(overlay.querySelector('.share-card'), { scale: 2, backgroundColor: '#ffffff' });
           const link = document.createElement('a');
-          link.download = `工作评估_${citySelect.value}_${new Date().toLocaleDateString()}.png`;
+          link.download = `工作评估_${city}_${total}分.png`;
           link.href = canvas.toDataURL('image/png');
           link.click();
-        } catch (error) {
-          alert('截图生成失败，请尝试刷新或手动截图。');
-          console.error(error);
+          alert('纯净卡片已保存，快去分享吧！');
+        } catch (e) {
+          alert('截图失败，可尝试手动截图。');
+        } finally {
+          document.body.removeChild(overlay);
         }
       });
 
       // 初始化
-      (async function init(){
-        buildCards();
-        await fetchCityData(citySelect.value);
-        updateUI();
-      })();
+      buildCards();
+      updateUI();
     })();
   </script>
 </body>
