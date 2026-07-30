@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>工作价值评估器 · 城市校准版</title>
+  <title>工作价值评估器 · 城市精准版</title>
+  <!-- 引入 html2canvas 用于截图分享 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
       --bg: #f7f5f2;
@@ -11,7 +13,6 @@
       --text: #2d2a26;
       --text-secondary: #6b6560;
       --accent: #5b7b94;
-      --accent-light: #e8f0f6;
       --green: #5a9e6f;
       --green-bg: #edf7f0;
       --yellow: #d4a24e;
@@ -20,155 +21,154 @@
       --orange-bg: #fef6f0;
       --red: #c55555;
       --red-bg: #fdf3f3;
-      --slider-track: #e0dcd7;
       --border: #e8e4df;
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
       --radius-sm: 10px;
       --radius: 16px;
-      --radius-lg: 24px;
-      --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', 'Menlo', monospace;
-      --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+      --transition: 0.2s ease;
     }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; -webkit-tap-highlight-color:transparent; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: var(--bg); color: var(--text); line-height:1.6; min-height:100vh;
       padding-bottom: env(safe-area-inset-bottom, 20px);
     }
-
     .app-header {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      padding: 10px 16px;
-      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      position:sticky; top:0; z-index:100; background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom:1px solid var(--border); padding:10px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
-    .logo { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; }
-    .logo .icon { font-size: 1.5rem; }
+    .logo { display:flex; align-items:center; gap:6px; font-weight:700; font-size:1rem; }
+    .logo .icon { font-size:1.4rem; }
     .city-selector {
-      display: flex; align-items: center; gap: 6px; background: var(--card-bg);
-      border: 1.5px solid var(--border); border-radius: 50px; padding: 6px 14px; box-shadow: var(--shadow-sm);
-      font-size: 0.8rem; font-weight: 600;
+      display:flex; align-items:center; gap:4px; background:var(--card-bg);
+      border:1.5px solid var(--border); border-radius:50px; padding:6px 12px;
+      font-size:0.8rem; font-weight:600;
     }
     .city-selector select {
-      border: none; background: transparent; font-weight: 600; font-size: 0.8rem; font-family: inherit;
-      color: var(--text); outline: none; cursor: pointer; padding: 2px 0; appearance: none;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="%236b6560"><path d="M7 10l5 5 5-5z"/></svg>');
-      background-repeat: no-repeat; background-position: right center; padding-right: 18px;
+      border:none; background:transparent; font-weight:600; font-size:0.8rem;
+      font-family:inherit; color:var(--text); outline:none; cursor:pointer;
+      appearance:none; background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="%236b6560"><path d="M7 10l5 5 5-5z"/></svg>');
+      background-repeat:no-repeat; background-position:right center; padding-right:18px;
     }
     .score-pill {
-      display: flex; align-items: center; gap: 6px; background: var(--card-bg);
-      border: 1.5px solid var(--border); border-radius: 50px; padding: 7px 14px; box-shadow: var(--shadow-sm);
-      min-width: 90px; justify-content: center; transition: all var(--transition);
+      display:flex; align-items:center; gap:6px; background:var(--card-bg);
+      border:1.5px solid var(--border); border-radius:50px; padding:7px 14px;
+      box-shadow:var(--shadow-sm); min-width:90px; justify-content:center;
+      transition:all var(--transition);
     }
-    .score-pill .score-num { font-size: 1.4rem; font-weight: 800; font-family: var(--font-mono); line-height: 1; }
-    .score-pill .score-label { font-size: 0.7rem; color: var(--text-secondary); line-height: 1.2; }
-    .score-pill.glow-green { border-color: var(--green); box-shadow: 0 0 0 4px rgba(90,158,111,0.12); }
-    .score-pill.glow-yellow { border-color: var(--yellow); box-shadow: 0 0 0 4px rgba(212,162,78,0.12); }
-    .score-pill.glow-orange { border-color: var(--orange); box-shadow: 0 0 0 4px rgba(212,126,78,0.12); }
-    .score-pill.glow-red { border-color: var(--red); box-shadow: 0 0 0 4px rgba(197,85,85,0.12); }
+    .score-pill .score-num { font-size:1.4rem; font-weight:800; font-family:var(--font-mono); }
+    .score-pill .score-label { font-size:0.7rem; color:var(--text-secondary); }
+    .score-pill.glow-green { border-color:var(--green); box-shadow:0 0 0 4px rgba(90,158,111,0.12); }
+    .score-pill.glow-yellow { border-color:var(--yellow); box-shadow:0 0 0 4px rgba(212,162,78,0.12); }
+    .score-pill.glow-orange { border-color:var(--orange); box-shadow:0 0 0 4px rgba(212,126,78,0.12); }
+    .score-pill.glow-red { border-color:var(--red); box-shadow:0 0 0 4px rgba(197,85,85,0.12); }
 
-    .main-container { max-width: 720px; margin: 0 auto; padding: 12px 16px 24px; display: flex; flex-direction: column; gap: 18px; }
-
+    .main-container { max-width:720px; margin:0 auto; padding:12px 16px 24px; display:flex; flex-direction:column; gap:18px; }
     .section-card {
-      background: var(--card-bg); border-radius: var(--radius); padding: 18px 16px;
-      box-shadow: var(--shadow-md); border: 1px solid var(--border);
+      background:var(--card-bg); border-radius:var(--radius); padding:18px 16px;
+      box-shadow:var(--shadow-md); border:1px solid var(--border);
     }
-    .section-title { font-size: 1rem; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
-    .section-subtitle { font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 14px; }
-
-    .dimension-grid { display: flex; flex-direction: column; gap: 10px; }
+    .section-title { font-size:1rem; font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+    .section-subtitle { font-size:0.78rem; color:var(--text-secondary); margin-bottom:14px; }
+    .dimension-grid { display:flex; flex-direction:column; gap:10px; }
     .dimension-card {
-      background: #fafaf8; border-radius: var(--radius-sm); padding: 12px 14px;
-      border: 1.5px solid transparent; transition: all var(--transition); position: relative;
+      background:#fafaf8; border-radius:var(--radius-sm); padding:12px 14px;
+      border:1.5px solid transparent; transition:all var(--transition);
     }
-    .dimension-card:hover { border-color: #d8d3cc; }
-    .dim-card-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
-    .dim-info { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
-    .dim-icon { font-size: 1.3rem; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f0ece6; border-radius: 50%; }
-    .dim-name { font-weight: 600; font-size: 0.85rem; line-height: 1.2; }
-    .dim-desc { font-size: 0.68rem; color: var(--text-secondary); }
-    .weight-badge { font-size: 0.62rem; background: #f0ece6; color: #8a8278; padding: 2px 8px; border-radius: 20px; font-weight: 600; white-space: nowrap; }
-    .weight-badge.high-weight { background: #fef3e0; color: #b8781e; }
-    .weight-badge.medium-weight { background: #eaf2f7; color: #4a6d85; }
-    .dim-score { font-size: 1.3rem; font-weight: 800; font-family: var(--font-mono); width: 30px; text-align: center; }
-    .score-high { color: var(--green); } .score-mid { color: var(--yellow); } .score-low { color: var(--red); }
-
-    .input-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .dimension-card:hover { border-color:#d8d3cc; }
+    .dim-card-header { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px; }
+    .dim-info { display:flex; align-items:center; gap:8px; min-width:0; flex:1; }
+    .dim-icon { font-size:1.3rem; width:32px; height:32px; display:flex; align-items:center; justify-content:center; background:#f0ece6; border-radius:50%; }
+    .dim-name { font-weight:600; font-size:0.85rem; }
+    .dim-desc { font-size:0.68rem; color:var(--text-secondary); }
+    .weight-badge { font-size:0.62rem; background:#f0ece6; color:#8a8278; padding:2px 8px; border-radius:20px; font-weight:600; white-space:nowrap; }
+    .weight-badge.high-weight { background:#fef3e0; color:#b8781e; }
+    .weight-badge.medium-weight { background:#eaf2f7; color:#4a6d85; }
+    .dim-score { font-size:1.3rem; font-weight:800; font-family:var(--font-mono); width:30px; text-align:center; }
+    .score-high { color:var(--green); } .score-mid { color:var(--yellow); } .score-low { color:var(--red); }
+    .input-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .input-field {
-      flex: 1; min-width: 100px; border: 1.5px solid #e0dcd7; border-radius: 8px; padding: 8px 10px;
-      font-size: 0.85rem; font-family: var(--font-mono); background: #fff; outline: none; transition: border var(--transition);
+      flex:1; min-width:100px; border:1.5px solid #e0dcd7; border-radius:8px; padding:8px 10px;
+      font-size:0.85rem; font-family:var(--font-mono); background:#fff; outline:none;
+      transition:border var(--transition);
     }
-    .input-field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,123,148,0.1); }
-    .input-unit { font-size: 0.75rem; color: var(--text-secondary); white-space: nowrap; }
+    .input-field:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(91,123,148,0.1); }
+    .input-unit { font-size:0.75rem; color:var(--text-secondary); white-space:nowrap; }
     .select-field {
-      flex: 1; min-width: 120px; border: 1.5px solid #e0dcd7; border-radius: 8px; padding: 8px 10px;
-      font-size: 0.85rem; background: #fff; font-family: inherit; outline: none; cursor: pointer; appearance: none;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="%236b6560"><path d="M7 10l5 5 5-5z"/></svg>');
-      background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px;
+      flex:1; min-width:120px; border:1.5px solid #e0dcd7; border-radius:8px; padding:8px 10px;
+      font-size:0.85rem; background:#fff; font-family:inherit; outline:none; cursor:pointer;
+      appearance:none; background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="%236b6560"><path d="M7 10l5 5 5-5z"/></svg>');
+      background-repeat:no-repeat; background-position:right 10px center; padding-right:32px;
     }
-    .select-field:focus { border-color: var(--accent); }
-
-    .btn-row { display: flex; justify-content: center; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+    .btn-row { display:flex; justify-content:center; gap:10px; margin-top:8px; flex-wrap:wrap; }
     .btn {
-      display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 50px;
-      border: 1.5px solid var(--border); background: #fff; font-size: 0.8rem; font-weight: 600;
-      cursor: pointer; color: var(--text-secondary); transition: all var(--transition); font-family: inherit;
+      display:inline-flex; align-items:center; gap:6px; padding:10px 20px; border-radius:50px;
+      border:1.5px solid var(--border); background:#fff; font-size:0.8rem; font-weight:600;
+      cursor:pointer; color:var(--text-secondary); transition:all var(--transition); font-family:inherit;
     }
-    .btn:hover { background: #f9f7f4; border-color: #c5bfb6; color: var(--text); }
-    .btn:active { transform: scale(0.96); }
+    .btn:hover { background:#f9f7f4; border-color:#c5bfb6; color:var(--text); }
+    .btn:active { transform:scale(0.96); }
+    .btn-primary { background:var(--accent); color:#fff; border-color:var(--accent); font-weight:700; }
+    .btn-primary:hover { background:#4a6b82; }
 
-    .result-area { scroll-margin-top: 90px; }
-    .result-hero { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 8px 0; }
-    .score-ring-container { position: relative; width: 130px; height: 130px; }
-    .score-ring-container svg { transform: rotate(-90deg); width: 130px; height: 130px; }
-    .score-ring-bg { fill: none; stroke: #eae6e0; stroke-width: 9; }
-    .score-ring-fg { fill: none; stroke-width: 9; stroke-linecap: round; transition: stroke-dashoffset 0.5s ease, stroke 0.4s; }
-    .score-ring-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
-    .big-score { font-size: 2.8rem; font-weight: 900; font-family: var(--font-mono); line-height: 1; }
-    .out-of { font-size: 0.7rem; color: var(--text-secondary); }
-
+    .result-area { scroll-margin-top:90px; }
+    .result-hero { display:flex; flex-direction:column; align-items:center; gap:10px; padding:8px 0; }
+    .score-ring-container { position:relative; width:130px; height:130px; }
+    .score-ring-container svg { transform:rotate(-90deg); width:130px; height:130px; }
+    .score-ring-bg { fill:none; stroke:#eae6e0; stroke-width:9; }
+    .score-ring-fg { fill:none; stroke-width:9; stroke-linecap:round; transition: stroke-dashoffset 0.5s ease, stroke 0.4s; }
+    .score-ring-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+    .big-score { font-size:2.8rem; font-weight:900; font-family:var(--font-mono); line-height:1; }
+    .out-of { font-size:0.7rem; color:var(--text-secondary); }
     .grade-badge {
-      font-size: 1.1rem; font-weight: 700; padding: 6px 18px; border-radius: 50px; text-align: center;
-      display: inline-block; margin-bottom: 4px;
+      font-size:1.1rem; font-weight:700; padding:6px 18px; border-radius:50px; text-align:center;
+      display:inline-block; margin-bottom:4px;
     }
     .grade-s{ background:#e6f4ea; color:#2d6a3f; } .grade-a{ background:#e6f4ea; color:#3d7a4f; }
     .grade-b{ background:#eaf2f7; color:#3d5d72; } .grade-c{ background:#fef9f0; color:#9a6e20; }
     .grade-d{ background:#fef6f0; color:#b0552a; } .grade-e{ background:#fdf3f3; color:#9a3535; } .grade-f{ background:#fdf0f0; color:#7a2020; }
 
-    .bar-chart { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
-    .bar-row { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; }
-    .bar-label { width: 75px; flex-shrink: 0; text-align: right; font-weight: 600; font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .bar-track { flex: 1; height: 8px; background: #eae6e0; border-radius: 10px; overflow: hidden; }
-    .bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s ease, background 0.4s; }
-    .bar-val { width: 24px; font-weight: 700; font-family: var(--font-mono); font-size: 0.75rem; text-align: left; }
+    .bar-chart { display:flex; flex-direction:column; gap:6px; margin-top:6px; }
+    .bar-row { display:flex; align-items:center; gap:8px; font-size:0.75rem; }
+    .bar-label { width:75px; flex-shrink:0; text-align:right; font-weight:600; font-size:0.7rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .bar-track { flex:1; height:8px; background:#eae6e0; border-radius:10px; overflow:hidden; }
+    .bar-fill { height:100%; border-radius:10px; transition:width 0.5s ease, background 0.4s; }
+    .bar-val { width:24px; font-weight:700; font-family:var(--font-mono); font-size:0.75rem; text-align:left; }
 
-    .insight-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
-    .insight-item { display: flex; gap: 8px; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 0.8rem; line-height: 1.4; }
-    .insight-item.strength { background: var(--green-bg); border-left: 3px solid var(--green); }
-    .insight-item.weakness { background: var(--red-bg); border-left: 3px solid var(--red); }
-    .advice-box { background: #fafcfe; border-radius: var(--radius-sm); padding: 14px; border: 1px solid #dce6f0; font-size: 0.8rem; margin-top: 8px; }
-    .advice-title { font-weight: 700; margin-bottom: 6px; font-size: 0.85rem; }
-    .humor-quote { font-style: italic; color: #b0552a; font-weight: 600; margin-top: 6px; }
+    .insight-grid { display:flex; flex-direction:column; gap:8px; margin-top:6px; }
+    .insight-item { display:flex; gap:8px; padding:10px 12px; border-radius:var(--radius-sm); font-size:0.8rem; }
+    .insight-item.strength { background:var(--green-bg); border-left:3px solid var(--green); }
+    .insight-item.weakness { background:var(--red-bg); border-left:3px solid var(--red); }
+    .advice-box { background:#fafcfe; border-radius:var(--radius-sm); padding:14px; border:1px solid #dce6f0; font-size:0.8rem; margin-top:8px; }
+    .advice-title { font-weight:700; margin-bottom:6px; font-size:0.85rem; }
+    .humor-quote { font-style:italic; color:#b0552a; font-weight:600; margin-top:6px; text-align:center; }
+
+    .share-buttons { display:flex; gap:10px; justify-content:center; margin-top:12px; flex-wrap:wrap; }
+    .loading-overlay {
+      position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.7);
+      display:flex; align-items:center; justify-content:center; z-index:999; font-weight:700;
+      backdrop-filter:blur(4px); transition:opacity 0.3s; pointer-events:none; opacity:0;
+    }
+    .loading-overlay.active { opacity:1; pointer-events:auto; }
 
     @media(min-width:640px){
-      .dimension-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-      .insight-grid { flex-direction: row; flex-wrap: wrap; }
-      .insight-item { flex: 1 1 45%; }
-      .score-ring-container { width: 150px; height: 150px; }
-      .score-ring-container svg { width: 150px; height: 150px; }
-      .big-score { font-size: 3.2rem; }
+      .dimension-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+      .insight-grid { flex-direction:row; flex-wrap:wrap; }
+      .insight-item { flex:1 1 45%; }
+      .score-ring-container { width:150px; height:150px; }
+      .score-ring-container svg { width:150px; height:150px; }
+      .big-score { font-size:3.2rem; }
     }
   </style>
 </head>
 <body>
+  <div class="loading-overlay" id="loadingOverlay">⏳ 正在获取城市最新薪资数据...</div>
+
   <header class="app-header">
     <div class="logo"><span class="icon">💼</span><span>工作价值评估</span></div>
     <div class="city-selector">
@@ -189,7 +189,7 @@
   <div class="main-container">
     <div class="section-card" id="ratingSection">
       <div class="section-title">📋 请填写实际数据</div>
-      <div class="section-subtitle">根据你的城市，系统会智能调整薪资和通勤的得分标准</div>
+      <div class="section-subtitle">基于城市实时薪资指数与通勤容忍度计算得分</div>
       <div class="dimension-grid" id="dimensionGrid"></div>
       <div class="btn-row">
         <button class="btn" id="btnReset">🔄 恢复示例</button>
@@ -199,7 +199,7 @@
 
     <div class="section-card result-area" id="resultSection">
       <div class="section-title">📈 评估结果</div>
-      <div class="section-subtitle" id="resultSubtitle">满分100分，基于10个维度加权计算</div>
+      <div class="section-subtitle" id="resultSubtitle">满分100分，数据已根据城市校准</div>
       <div class="result-hero">
         <div class="score-ring-container">
           <svg viewBox="0 0 130 130"><circle class="score-ring-bg" cx="65" cy="65" r="58"/><circle class="score-ring-fg" id="scoreRing" cx="65" cy="65" r="58" stroke="#5b7b94" stroke-dasharray="364.4" stroke-dashoffset="182"/></svg>
@@ -216,30 +216,59 @@
         <div class="advice-title">💡 综合建议</div>
         <div id="adviceContent"></div>
       </div>
+      <div class="share-buttons">
+        <button class="btn" id="btnShare">📤 分享结果</button>
+        <button class="btn btn-primary" id="btnScreenshot">📸 保存截图</button>
+      </div>
     </div>
   </div>
 
   <script>
     (function() {
-      // ---------- 城市基准数据 ----------
-      const cityData = {
-        '北京': { salaryThreshold: 35000, commuteBase: 20, commuteStep: 8 },
-        '上海': { salaryThreshold: 35000, commuteBase: 20, commuteStep: 8 },
-        '广州': { salaryThreshold: 30000, commuteBase: 18, commuteStep: 7 },
-        '深圳': { salaryThreshold: 35000, commuteBase: 20, commuteStep: 8 },
-        '杭州': { salaryThreshold: 28000, commuteBase: 16, commuteStep: 6 },
-        '成都': { salaryThreshold: 25000, commuteBase: 15, commuteStep: 5 },
-        '武汉': { salaryThreshold: 24000, commuteBase: 15, commuteStep: 5 },
-        '南京': { salaryThreshold: 27000, commuteBase: 16, commuteStep: 6 },
-        '长沙': { salaryThreshold: 22000, commuteBase: 12, commuteStep: 4 },
-        '厦门': { salaryThreshold: 24000, commuteBase: 15, commuteStep: 5 },
-        '其他': { salaryThreshold: 20000, commuteBase: 12, commuteStep: 4 }
+      // ---------- 模拟API：城市实时薪资数据 (可通过真实API替换) ----------
+      const CITY_API_ENDPOINT = 'https://api.example.com/city-salary'; // 示例端点
+      // 内置备用数据，模拟API返回结构
+      const FALLBACK_CITY_DATA = {
+        '北京': { avgSalary: 38000, commuteBase: 18, commuteStep: 6, costIndex: 1.2 },
+        '上海': { avgSalary: 37000, commuteBase: 18, commuteStep: 6, costIndex: 1.2 },
+        '广州': { avgSalary: 32000, commuteBase: 16, commuteStep: 5, costIndex: 1.0 },
+        '深圳': { avgSalary: 36000, commuteBase: 18, commuteStep: 6, costIndex: 1.1 },
+        '杭州': { avgSalary: 30000, commuteBase: 15, commuteStep: 5, costIndex: 1.0 },
+        '成都': { avgSalary: 27000, commuteBase: 14, commuteStep: 4, costIndex: 0.9 },
+        '武汉': { avgSalary: 26000, commuteBase: 14, commuteStep: 4, costIndex: 0.85 },
+        '南京': { avgSalary: 29000, commuteBase: 15, commuteStep: 5, costIndex: 0.95 },
+        '长沙': { avgSalary: 24000, commuteBase: 12, commuteStep: 3, costIndex: 0.8 },
+        '厦门': { avgSalary: 26000, commuteBase: 14, commuteStep: 4, costIndex: 0.9 },
+        '其他': { avgSalary: 22000, commuteBase: 12, commuteStep: 4, costIndex: 0.8 }
       };
+      let currentCityData = FALLBACK_CITY_DATA['深圳']; // 默认
+
+      // 模拟API调用 (展示对接过程)
+      async function fetchCityData(cityName) {
+        document.getElementById('loadingOverlay').classList.add('active');
+        try {
+          // 实际项目中替换为真实API请求:
+          // const response = await fetch(`${CITY_API_ENDPOINT}?city=${encodeURIComponent(cityName)}`);
+          // const data = await response.json();
+          // 这里使用模拟延迟和内置数据
+          await new Promise(resolve => setTimeout(resolve, 300));
+          const data = FALLBACK_CITY_DATA[cityName] || FALLBACK_CITY_DATA['其他'];
+          currentCityData = data;
+          console.log(`[API模拟] 已获取${cityName}薪资数据:`, data);
+          return data;
+        } catch (error) {
+          console.warn('API获取失败，使用内置数据', error);
+          currentCityData = FALLBACK_CITY_DATA[cityName] || FALLBACK_CITY_DATA['其他'];
+          return currentCityData;
+        } finally {
+          document.getElementById('loadingOverlay').classList.remove('active');
+        }
+      }
 
       // ---------- 维度定义 ----------
       const dimensions = [
         { id: 'salary', icon: '💰', name: '月薪（税前）', desc: '单位：元', weight: 2.0, type: 'number', placeholder: '例如 15000', unit: '元', cityAdjust: true },
-        { id: 'overtime', icon: '⚖️', name: '每周加班', desc: '小时数', weight: 1.5, type: 'number', placeholder: '例如 5', unit: '小时', cityAdjust: false, min: 0, max: 40 },
+        { id: 'overtime', icon: '⚖️', name: '每周加班', desc: '小时数', weight: 1.5, type: 'number', placeholder: '例如 5', unit: '小时', min: 0, max: 40 },
         { id: 'commute', icon: '🚇', name: '单程通勤', desc: '分钟数', weight: 1.0, type: 'number', placeholder: '例如 40', unit: '分钟', cityAdjust: true, min: 1, max: 180 },
         { id: 'growth', icon: '📈', name: '成长空间', weight: 1.5, type: 'select', options: ['几乎没有','较少','一般','较好','非常好'] },
         { id: 'interest', icon: '❤️', name: '工作兴趣', weight: 1.0, type: 'select', options: ['非常讨厌','不喜欢','一般','喜欢','充满热情'] },
@@ -250,18 +279,15 @@
         { id: 'autonomy', icon: '🕊️', name: '工作自主权', weight: 0.3, type: 'select', options: ['完全被管控','较多限制','一般','比较自由','高度自由'] }
       ];
 
-      const totalWeight = dimensions.reduce((s,d)=>s+d.weight,0); // 10.0
-
-      // 用户输入存储
+      const totalWeight = dimensions.reduce((s,d)=>s+d.weight,0);
       const userInput = {};
-      // 初始化默认值
       dimensions.forEach(d => {
         if (d.type === 'number') {
           if (d.id === 'salary') userInput[d.id] = 15000;
           else if (d.id === 'overtime') userInput[d.id] = 5;
           else if (d.id === 'commute') userInput[d.id] = 40;
         } else {
-          userInput[d.id] = 2; // 选中索引，对应“一般”
+          userInput[d.id] = 2;
         }
       });
 
@@ -275,17 +301,15 @@
       const resultGrade = document.getElementById('resultGrade');
       const headerScore = document.getElementById('headerScore');
       const scorePill = document.getElementById('scorePill');
-      const btnReset = document.getElementById('btnReset');
-      const btnScroll = document.getElementById('btnScrollToResult');
       const citySelect = document.getElementById('citySelect');
-      const circumference = 2 * Math.PI * 58; // ≈364.4
+      const circumference = 2 * Math.PI * 58;
 
-      // ---------- 根据城市和输入计算维度得分 ----------
-      function computeDimensionScore(dim, value, city) {
+      // 计算维度得分
+      function computeDimensionScore(dim, value) {
         if (dim.type === 'number') {
           if (dim.id === 'salary') {
-            const threshold = city.salaryThreshold;
-            let raw = (value / threshold) * 10;
+            const avg = currentCityData.avgSalary || 25000;
+            let raw = (value / avg) * 10;
             return Math.min(10, Math.max(1, Math.round(raw)));
           }
           if (dim.id === 'overtime') {
@@ -295,8 +319,8 @@
           }
           if (dim.id === 'commute') {
             const mins = parseFloat(value) || 0;
-            const base = city.commuteBase;
-            const step = city.commuteStep;
+            const base = currentCityData.commuteBase || 15;
+            const step = currentCityData.commuteStep || 5;
             if (mins <= base) return 10;
             const extra = mins - base;
             const deduction = Math.ceil(extra / step);
@@ -305,22 +329,15 @@
         }
         if (dim.type === 'select') {
           const idx = parseInt(value);
-          const map = [1, 3, 5, 7, 10]; // 索引0-4映射分数
+          const map = [1, 3, 5, 7, 10];
           return map[idx] || 5;
         }
         return 5;
       }
 
-      function getCurrentCity() {
-        return citySelect.value;
-      }
-
       function calculateAllScores() {
-        const city = cityData[getCurrentCity()] || cityData['其他'];
         const scores = {};
-        dimensions.forEach(d => {
-          scores[d.id] = computeDimensionScore(d, userInput[d.id], city);
-        });
+        dimensions.forEach(d => scores[d.id] = computeDimensionScore(d, userInput[d.id]));
         return scores;
       }
 
@@ -330,59 +347,26 @@
         return Math.round(total);
       }
 
-      // ---------- 等级与幽默文案 ----------
       function getGradeInfo(score) {
-        if (score >= 90) return {
-          grade:'S', label:'🏆 梦中情工！快锁死', cssClass:'grade-s', ringColor:'#5a9e6f', pillGlow:'glow-green',
-          humor:'“这工作，老板怕不是慈善家。”',
-          summary:'综合评分极高，各方面都令人满意，是一份难得的好工作。'
-        };
-        if (score >= 78) return {
-          grade:'A', label:'👍 挺香的，可以冲', cssClass:'grade-a', ringColor:'#5a9e6f', pillGlow:'glow-green',
-          humor:'“已经打败了80%的打工人。”',
-          summary:'整体表现优秀，值得长期投入。'
-        };
-        if (score >= 65) return {
-          grade:'B', label:'🍗 鸡肋，但能啃', cssClass:'grade-b', ringColor:'#5b7b94', pillGlow:'',
-          humor:'“食之无味，弃之可惜，说的就是它。”',
-          summary:'还不错，但有些维度差强人意，可以再观望或争取改善。'
-        };
-        if (score >= 50) return {
-          grade:'C', label:'🤔 为五斗米折腰', cssClass:'grade-c', ringColor:'#d4a24e', pillGlow:'glow-yellow',
-          humor:'“你的灵魂正在角落里叹气。”',
-          summary:'处于及格线，有明显短板。如果高权重维度得分低，需慎重考虑。'
-        };
-        if (score >= 35) return {
-          grade:'D', label:'🐶 狗都不去！快逃', cssClass:'grade-d', ringColor:'#d47e4e', pillGlow:'glow-orange',
-          humor:'“别问了，问就是快跑。”',
-          summary:'多个维度不及格，这份工作可能正在消耗你，建议尽早寻找下家。'
-        };
-        if (score >= 20) return {
-          grade:'E', label:'⚡ 渡劫模式', cssClass:'grade-e', ringColor:'#c55555', pillGlow:'glow-red',
-          humor:'“施主，这份工是在修炼心性吗？”',
-          summary:'大部分维度都很糟糕，继续下去身心健康堪忧。'
-        };
-        return {
-          grade:'F', label:'💀 这福气给你要不要', cssClass:'grade-f', ringColor:'#c55555', pillGlow:'glow-red',
-          humor:'“建议直接开摆，或者报警。”',
-          summary:'几乎一无是处，立刻启动离职计划！'
-        };
+        if (score >= 90) return { grade:'S', label:'🏆 梦中情工！快锁死', cssClass:'grade-s', ringColor:'#5a9e6f', pillGlow:'glow-green', humor:'“这工作，老板怕不是慈善家。”', summary:'综合评分极高，各方面都令人满意，是一份难得的好工作。' };
+        if (score >= 78) return { grade:'A', label:'👍 挺香的，可以冲', cssClass:'grade-a', ringColor:'#5a9e6f', pillGlow:'glow-green', humor:'“已经打败了80%的打工人。”', summary:'整体表现优秀，值得长期投入。' };
+        if (score >= 65) return { grade:'B', label:'🍗 鸡肋，但能啃', cssClass:'grade-b', ringColor:'#5b7b94', pillGlow:'', humor:'“食之无味，弃之可惜，说的就是它。”', summary:'还不错，但有些维度差强人意，可以再观望或争取改善。' };
+        if (score >= 50) return { grade:'C', label:'🤔 为五斗米折腰', cssClass:'grade-c', ringColor:'#d4a24e', pillGlow:'glow-yellow', humor:'“你的灵魂正在角落里叹气。”', summary:'处于及格线，有明显短板。如果高权重维度得分低，需慎重考虑。' };
+        if (score >= 35) return { grade:'D', label:'🐶 狗都不去！快逃', cssClass:'grade-d', ringColor:'#d47e4e', pillGlow:'glow-orange', humor:'“别问了，问就是快跑。”', summary:'多个维度不及格，这份工作可能正在消耗你，建议尽早寻找下家。' };
+        if (score >= 20) return { grade:'E', label:'⚡ 渡劫模式', cssClass:'grade-e', ringColor:'#c55555', pillGlow:'glow-red', humor:'“施主，这份工是在修炼心性吗？”', summary:'大部分维度都很糟糕，继续下去身心健康堪忧。' };
+        return { grade:'F', label:'💀 这福气给你要不要', cssClass:'grade-f', ringColor:'#c55555', pillGlow:'glow-red', humor:'“建议直接开摆，或者报警。”', summary:'几乎一无是处，立刻启动离职计划！' };
       }
 
-      // ---------- UI更新 ----------
       function updateUI() {
-        const city = cityData[getCurrentCity()] || cityData['其他'];
         const scores = calculateAllScores();
         const total = calculateTotal(scores);
         const gradeInfo = getGradeInfo(total);
 
-        // 顶部pill
         headerScore.textContent = total;
         scorePill.classList.remove('glow-green','glow-yellow','glow-orange','glow-red');
         if (gradeInfo.pillGlow) scorePill.classList.add(gradeInfo.pillGlow);
         headerScore.style.color = gradeInfo.ringColor;
 
-        // 环形图
         resultBigScore.textContent = total;
         resultBigScore.style.color = gradeInfo.ringColor;
         const offset = circumference * (1 - total / 100);
@@ -390,21 +374,14 @@
         scoreRing.setAttribute('stroke-dashoffset', offset);
         scoreRing.setAttribute('stroke', gradeInfo.ringColor);
 
-        // 等级与幽默
         resultGrade.textContent = gradeInfo.label;
         resultGrade.className = 'grade-badge ' + gradeInfo.cssClass;
         humorQuote.textContent = '“' + gradeInfo.humor + '”';
 
-        // 条形图
         updateBarChart(scores);
-
-        // 洞察
         updateInsights(scores, total, gradeInfo);
-
-        // 建议
         updateAdvice(total, gradeInfo, scores);
 
-        // 实时更新各维度卡片上的小分数
         dimensions.forEach(d => {
           const scoreSpan = document.getElementById('dimScore_'+d.id);
           if (scoreSpan) {
@@ -421,11 +398,7 @@
           const s = scores[d.id];
           const pct = s*10;
           let barColor = s>=8?'#5a9e6f':s>=6?'#7aaf8d':s>=5?'#d4a24e':s>=3?'#d47e4e':'#c55555';
-          return `<div class="bar-row">
-            <span class="bar-label">${d.icon} ${d.name}</span>
-            <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${barColor};"></div></div>
-            <span class="bar-val" style="color:${barColor}">${s}</span>
-          </div>`;
+          return `<div class="bar-row"><span class="bar-label">${d.icon} ${d.name}</span><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${barColor};"></div></div><span class="bar-val" style="color:${barColor}">${s}</span></div>`;
         }).join('');
       }
 
@@ -449,28 +422,18 @@
       function updateAdvice(total, gradeInfo, scores) {
         const highWeightWeak = dimensions.filter(d=>d.weight>=1.0 && scores[d.id]<=4);
         let advice = `<p>${gradeInfo.summary}</p>`;
-        if (total >= 78) {
-          advice += '<p>🎯 你可以关注那些得分稍低的维度，看看能否通过沟通进一步优化体验。</p>';
-        } else if (total >= 65) {
-          advice += '<p>📋 建议重点关注得分低于6分的维度，评估这些短板是否可接受或可改变。</p>';
-        } else if (total >= 50) {
-          advice += '<p>⚖️ 若薪资、成长、生活平衡等高权重维度偏低，认真考虑是否值得继续。可尝试与上级沟通，同时留意其他机会。</p>';
-        } else if (total >= 35) {
-          advice += '<p>🚩 建议将这份工作视为过渡，积极寻找更合适的机会，同时积累资源。</p>';
-        } else {
-          advice += '<p>🆘 优先保护自己的身心健康，设定明确的离职时间线。</p>';
-        }
-        if (highWeightWeak.length) {
-          advice += `<p style="color:#b0552a;margin-top:6px;">⚠️ 特别注意：${highWeightWeak.map(d=>d.name).join('、')}属于高权重但得分很低，对总分影响巨大。</p>`;
-        }
+        if (total >= 78) advice += '<p>🎯 你可以关注那些得分稍低的维度，看看能否通过沟通进一步优化体验。</p>';
+        else if (total >= 65) advice += '<p>📋 建议重点关注得分低于6分的维度，评估这些短板是否可接受或可改变。</p>';
+        else if (total >= 50) advice += '<p>⚖️ 若薪资、成长、生活平衡等高权重维度偏低，认真考虑是否值得继续。可尝试与上级沟通，同时留意其他机会。</p>';
+        else if (total >= 35) advice += '<p>🚩 建议将这份工作视为过渡，积极寻找更合适的机会，同时积累资源。</p>';
+        else advice += '<p>🆘 优先保护自己的身心健康，设定明确的离职时间线。</p>';
+        if (highWeightWeak.length) advice += `<p style="color:#b0552a;margin-top:6px;">⚠️ 特别注意：${highWeightWeak.map(d=>d.name).join('、')}属于高权重但得分很低，对总分影响巨大。</p>`;
         const gap = 100 - total;
-        if (gap >= 25) {
-          advice += `<p style="color:var(--text-secondary);">📉 当前与满分差距<strong>${gap}分</strong>，主要拖分项见上方条形图。</p>`;
-        }
+        if (gap >= 25) advice += `<p style="color:var(--text-secondary);">📉 当前与满分差距<strong>${gap}分</strong>，主要拖分项见上方条形图。</p>`;
         adviceContent.innerHTML = advice;
       }
 
-      // ---------- 构建卡片 ----------
+      // 构建卡片
       function buildCards() {
         dimensionGrid.innerHTML = '';
         dimensions.forEach(dim => {
@@ -482,16 +445,13 @@
               <input type="number" class="input-field" id="input_${dim.id}" placeholder="${dim.placeholder||''}" value="${userInput[dim.id]}" step="${dim.id==='salary'?1000:1}" min="${dim.min||0}" max="${dim.max||''}">
               <span class="input-unit">${dim.unit||''}</span>
             </div>`;
-          } else if (dim.type === 'select') {
+          } else {
             const opts = dim.options.map((opt, idx) => `<option value="${idx}" ${userInput[dim.id]==idx?'selected':''}>${opt}</option>`).join('');
             inputHtml = `<select class="select-field" id="input_${dim.id}">${opts}</select>`;
           }
           card.innerHTML = `
             <div class="dim-card-header">
-              <div class="dim-info">
-                <div class="dim-icon">${dim.icon}</div>
-                <div><div class="dim-name">${dim.name}</div><div class="dim-desc">${dim.desc||''}</div></div>
-              </div>
+              <div class="dim-info"><div class="dim-icon">${dim.icon}</div><div><div class="dim-name">${dim.name}</div><div class="dim-desc">${dim.desc||''}</div></div></div>
               <span class="weight-badge ${dim.weight>=1.5?'high-weight':'medium-weight'}">权重${dim.weight.toFixed(1)}</span>
               <span class="dim-score score-mid" id="dimScore_${dim.id}">5</span>
             </div>
@@ -499,12 +459,10 @@
           `;
           dimensionGrid.appendChild(card);
 
-          // 绑定事件
           const inputEl = card.querySelector(`#input_${dim.id}`);
           inputEl.addEventListener('input', function() {
-            let val;
             if (dim.type === 'number') {
-              val = parseFloat(this.value) || 0;
+              let val = parseFloat(this.value) || 0;
               if (dim.min !== undefined && val < dim.min) val = dim.min;
               userInput[dim.id] = val;
             } else {
@@ -512,44 +470,76 @@
             }
             updateUI();
           });
-          inputEl.addEventListener('change', function() {
-            if (dim.type === 'number') {
-              let val = parseFloat(this.value) || 0;
-              if (dim.min !== undefined && val < dim.min) { this.value = dim.min; userInput[dim.id] = dim.min; }
-              else userInput[dim.id] = val;
-              updateUI();
-            }
-          });
         });
       }
 
-      // 城市切换
-      citySelect.addEventListener('change', () => {
+      // 城市切换事件
+      citySelect.addEventListener('change', async () => {
+        await fetchCityData(citySelect.value);
         updateUI();
       });
 
-      // 重置示例
-      btnReset.addEventListener('click', ()=>{
+      // 重置
+      document.getElementById('btnReset').addEventListener('click', async ()=>{
         userInput.salary = 15000;
         userInput.overtime = 5;
         userInput.commute = 40;
         dimensions.forEach(d=>{ if(d.type==='select') userInput[d.id]=2; });
-        // 更新UI控件值
         document.getElementById('input_salary').value = 15000;
         document.getElementById('input_overtime').value = 5;
         document.getElementById('input_commute').value = 40;
         dimensions.forEach(d=>{ if(d.type==='select') document.getElementById('input_'+d.id).value = 2; });
+        await fetchCityData(citySelect.value);
         updateUI();
         document.getElementById('ratingSection').scrollIntoView({behavior:'smooth'});
       });
 
-      btnScroll.addEventListener('click', ()=>{
+      document.getElementById('btnScrollToResult').addEventListener('click', ()=>{
         document.getElementById('resultSection').scrollIntoView({behavior:'smooth'});
       });
 
+      // ---------- 分享功能 ----------
+      document.getElementById('btnShare').addEventListener('click', async ()=>{
+        const total = calculateTotal(calculateAllScores());
+        const gradeInfo = getGradeInfo(total);
+        const shareText = `【工作价值评估】我在${citySelect.value}的工作得分：${total}/100分 ${gradeInfo.label} ${gradeInfo.humor}`;
+        if (navigator.share) {
+          try {
+            await navigator.share({ title: '工作价值评估', text: shareText, url: window.location.href });
+          } catch (e) { console.log('分享取消'); }
+        } else {
+          await navigator.clipboard.writeText(shareText);
+          alert('结果已复制到剪贴板，可以粘贴分享给朋友！');
+        }
+      });
+
+      // 截图保存
+      document.getElementById('btnScreenshot').addEventListener('click', async function(){
+        const element = document.getElementById('resultSection');
+        try {
+          const canvas = await html2canvas(element, {
+            scale: 2,
+            backgroundColor: '#ffffff',
+            allowTaint: false,
+            useCORS: true,
+            logging: false
+          });
+          const link = document.createElement('a');
+          link.download = `工作评估_${citySelect.value}_${new Date().toLocaleDateString()}.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        } catch (error) {
+          alert('截图生成失败，请尝试刷新或手动截图。');
+          console.error(error);
+        }
+      });
+
       // 初始化
-      buildCards();
-      updateUI();
+      (async function init(){
+        buildCards();
+        await fetchCityData(citySelect.value);
+        updateUI();
+      })();
     })();
   </script>
 </body>
