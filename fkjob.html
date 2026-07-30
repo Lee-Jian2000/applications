@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作价值评估器 - 这份工作值不值得？</title>
+    <style>
+        :root {
+            --bg: #f5f3f0;
+            --card-bg: #ffffff;
+            --text: #2d2a26;
+            --text-secondary: #6b6560;
+            --accent: #5b7b94;
+            --accent-light: #e8f0f6;
+            --gold: #c8963e;
+            --green: #5a9e6f;
+            --green-bg: #edf7f0;
+            --yellow: #d4a24e;
+            --yellow-bg: #fef9f0;
+            --orange: #d47e4e;
+            --orange-bg: #fef6f0;
+            --red: #c55555;
+            --red-bg: #fdf3f3;
+            --slider-track: #e0dcd7;
+            --slider-fill: #5b7b94;
+            --border: #e8e4df;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --radius-sm: 10px;
+            --radius: 16px;
+            --radius-lg: 24px;
+            --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', 'Menlo', monospace;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        /* ============ 顶部导航栏 ============ */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .app-header .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text);
+            letter-spacing: -0.01em;
+        }
+        .app-header .logo .icon {
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+        .score-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card-bg);
+            border: 1.5px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition);
+            min-width: 100px;
+            justify-content: center;
+        }
+        .score-pill .score-num {
+            font-size: 1.6rem;
+            font-weight: 800;
+            font-family: var(--font-mono);
+            letter-spacing: -0.02em;
+            transition: color var(--transition);
+            line-height: 1;
+        }
+        .score-pill .score-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            line-height: 1.2;
+        }
+        .score-pill.glow-green {
+            border-color: var(--green);
+            box-shadow: 0 0 0 4px rgba(90, 158, 111, 0.12);
+        }
+        .score-pill.glow-yellow {
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 4px rgba(212, 162, 78, 0.12);
+        }
+        .score-pill.glow-orange {
+            border-color: var(--orange);
+            box-shadow: 0 0 0 4px rgba(212, 126, 78, 0.12);
+        }
+        .score-pill.glow-red {
+            border-color: var(--red);
+            box-shadow: 0 0 0 4px rgba(197, 85, 85, 0.12);
+        }
+
+        /* ============ 主容器 ============ */
+        .main-container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* ============ 区块卡片 ============ */
+        .section-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px 18px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            transition: all var(--transition);
+        }
+        .section-card .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: -0.01em;
+        }
+        .section-card .section-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        /* ============ 维度评分卡片 ============ */
+        .dimension-card {
+            background: #fafaf8;
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border: 1.5px solid transparent;
+            transition: all var(--transition);
+            cursor: default;
+            position: relative;
+        }
+        .dimension-card:last-child {
+            margin-bottom: 0;
+        }
+        .dimension-card:hover {
+            border-color: #d8d3cc;
+            box-shadow: var(--shadow-sm);
+        }
+        .dimension-card.active-dim {
+            border-color: var(--accent);
+            background: #fafcfe;
+            box-shadow: 0 0 0 3px rgba(91, 123, 148, 0.06);
+        }
+        .dim-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .dim-card-header .dim-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+        .dim-icon {
+            font-size: 1.4rem;
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0ece6;
+            border-radius: 50%;
+            line-height: 1;
+        }
+        .dim-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+        .dim-desc {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            line-height: 1.3;
+        }
+        .dim-score-display {
+            font-size: 1.5rem;
+            font-weight: 800;
+            font-family: var(--font-mono);
+            width: 36px;
+            text-align: center;
+            flex-shrink: 0;
+            transition: color var(--transition);
+            line-height: 1;
+        }
+        .score-high {
+            color: var(--green);
+        }
+        .score-mid {
+            color: var(--yellow);
+        }
+        .score-low {
+            color: var(--red);
+        }
+
+        /* ============ 自定义滑块 ============ */
+        .slider-container {
+            position: relative;
+            width: 100%;
+        }
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: #b0aaa3;
+            margin-bottom: 2px;
+            padding: 0 2px;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 10px;
+            background: var(--slider-track);
+            outline: none;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2.5px solid var(--accent);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: all var(--transition);
+            position: relative;
+        }
+        input[type="range"]::-webkit-slider-thumb:active {
+            transform: scale(1.15);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+            border-color: #3d5d72;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2.5px solid var(--accent);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        /* 滑块刻度点 */
+        .tick-marks {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 6px;
+            margin-top: 1px;
+            pointer-events: none;
+        }
+        .tick-marks span {
+            width: 2px;
+            height: 6px;
+            background: #d5d0c9;
+            border-radius: 1px;
+        }
+
+        /* ============ 权重标签 ============ */
+        .weight-badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            background: #f0ece6;
+            color: #8a8278;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            flex-shrink: 0;
+        }
+        .weight-badge.high-weight {
+            background: #fef3e0;
+            color: #b8781e;
+        }
+        .weight-badge.medium-weight {
+            background: #eaf2f7;
+            color: #4a6d85;
+        }
+
+        /* ============ 结果区域 ============ */
+        .result-area {
+            scroll-margin-top: 100px;
+        }
+        .result-hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+            padding: 10px 0 6px;
+        }
+        .score-ring-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            flex-shrink: 0;
+        }
+        .score-ring-container svg {
+            transform: rotate(-90deg);
+            width: 140px;
+            height: 140px;
+        }
+        .score-ring-bg {
+            fill: none;
+            stroke: #eae6e0;
+            stroke-width: 10;
+        }
+        .score-ring-fg {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s ease;
+        }
+        .score-ring-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        .score-ring-center .big-score {
+            font-size: 3rem;
+            font-weight: 900;
+            font-family: var(--font-mono);
+            letter-spacing: -0.03em;
+            line-height: 1;
+            transition: color var(--transition);
+        }
+        .score-ring-center .out-of {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .result-grade {
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 6px 18px;
+            border-radius: 50px;
+            letter-spacing: 0.02em;
+            transition: all var(--transition);
+        }
+        .grade-s {
+            background: #e6f4ea;
+            color: #2d6a3f;
+        }
+        .grade-a {
+            background: #e6f4ea;
+            color: #3d7a4f;
+        }
+        .grade-b {
+            background: #eaf2f7;
+            color: #3d5d72;
+        }
+        .grade-c {
+            background: #fef9f0;
+            color: #9a6e20;
+        }
+        .grade-d {
+            background: #fef6f0;
+            color: #b0552a;
+        }
+        .grade-e {
+            background: #fdf3f3;
+            color: #9a3535;
+        }
+        .grade-f {
+            background: #fdf0f0;
+            color: #7a2020;
+        }
+
+        /* ============ 维度条形图 ============ */
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.78rem;
+        }
+        .bar-label {
+            width: 70px;
+            flex-shrink: 0;
+            text-align: right;
+            font-weight: 600;
+            font-size: 0.72rem;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .bar-track {
+            flex: 1;
+            height: 10px;
+            background: #eae6e0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease;
+            min-width: 4px;
+        }
+        .bar-val {
+            width: 28px;
+            flex-shrink: 0;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            text-align: left;
+        }
+
+        /* ============ 洞察卡片 ============ */
+        .insight-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .insight-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            line-height: 1.4;
+        }
+        .insight-item.strength {
+            background: var(--green-bg);
+            border-left: 3px solid var(--green);
+        }
+        .insight-item.weakness {
+            background: var(--red-bg);
+            border-left: 3px solid var(--red);
+        }
+        .insight-item .insight-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .advice-box {
+            background: #fafcfe;
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            border: 1px solid #dce6f0;
+            font-size: 0.82rem;
+            line-height: 1.5;
+            margin-top: 6px;
+        }
+        .advice-box .advice-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+            font-size: 0.85rem;
+        }
+
+        /* ============ 按钮 ============ */
+        .btn-reset {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1.5px solid var(--border);
+            background: #fff;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all var(--transition);
+            letter-spacing: 0.01em;
+            font-family: inherit;
+        }
+        .btn-reset:hover {
+            background: #f9f7f4;
+            border-color: #c5bfb6;
+            color: var(--text);
+        }
+        .btn-reset:active {
+            transform: scale(0.96);
+            background: #f0ece6;
+        }
+        .btn-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        /* ============ 响应式 ============ */
+        @media (min-width: 640px) {
+            .main-container {
+                padding: 24px 20px;
+                gap: 24px;
+            }
+            .section-card {
+                padding: 24px 22px;
+            }
+            .dimension-card {
+                padding: 16px 18px;
+            }
+            .bar-label {
+                width: 85px;
+                font-size: 0.76rem;
+            }
+            .score-ring-container {
+                width: 160px;
+                height: 160px;
+            }
+            .score-ring-container svg {
+                width: 160px;
+                height: 160px;
+            }
+            .score-ring-center .big-score {
+                font-size: 3.4rem;
+            }
+        }
+        @media (min-width: 768px) {
+            .dimension-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .dimension-card {
+                margin-bottom: 0;
+            }
+            .insight-grid {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .insight-item {
+                flex: 1 1 45%;
+                min-width: 200px;
+            }
+        }
+
+        /* ============ 动画 ============ */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .dimension-card {
+            animation: fadeInUp 0.4s ease forwards;
+        }
+        .dimension-card:nth-child(1) {
+            animation-delay: 0.02s;
+        }
+        .dimension-card:nth-child(2) {
+            animation-delay: 0.05s;
+        }
+        .dimension-card:nth-child(3) {
+            animation-delay: 0.08s;
+        }
+        .dimension-card:nth-child(4) {
+            animation-delay: 0.11s;
+        }
+        .dimension-card:nth-child(5) {
+            animation-delay: 0.14s;
+        }
+        .dimension-card:nth-child(6) {
+            animation-delay: 0.17s;
+        }
+        .dimension-card:nth-child(7) {
+            animation-delay: 0.20s;
+        }
+        .dimension-card:nth-child(8) {
+            animation-delay: 0.23s;
+        }
+        .dimension-card:nth-child(9) {
+            animation-delay: 0.26s;
+        }
+        .dimension-card:nth-child(10) {
+            animation-delay: 0.29s;
+        }
+
+        /* ============ 打印友好 ============ */
+        @media print {
+            body {
+                background: #fff;
+            }
+            .app-header {
+                position: static;
+                box-shadow: none;
+            }
+            .section-card {
+                box-shadow: none;
+                break-inside: avoid;
+            }
+            .btn-row {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== 顶部导航 ==================== -->
+    <header class="app-header">
+        <div class="logo">
+            <span class="icon">💼</span>
+            <span>工作价值评估</span>
+        </div>
+        <div class="score-pill" id="scorePill">
+            <span class="score-label">总分</span>
+            <span class="score-num" id="headerScore">50</span>
+        </div>
+    </header>
+
+    <!-- ==================== 主容器 ==================== -->
+    <div class="main-container">
+
+        <!-- 评分区域 -->
+        <div class="section-card" id="ratingSection">
+            <div class="section-title">📋 请评估以下维度</div>
+            <div class="section-subtitle">拖动滑块为每个维度打分（1=最差，10=最优），结果将实时更新</div>
+            <div class="dimension-grid" id="dimensionGrid">
+                <!-- 由JS动态生成 -->
+            </div>
+            <div class="btn-row">
+                <button class="btn-reset" id="btnReset" title="恢复默认值">
+                    🔄 恢复默认
+                </button>
+                <button class="btn-reset" id="btnScrollToResult" title="查看详细分析">
+                    📊 查看详细分析 ↓
+                </button>
+            </div>
+        </div>
+
+        <!-- 结果区域 -->
+        <div class="section-card result-area" id="resultSection">
+            <div class="section-title">📈 评估结果</div>
+            <div class="section-subtitle">基于10个维度的加权综合评分，满分100分</div>
+
+            <!-- 总分仪表盘 -->
+            <div class="result-hero">
+                <div class="score-ring-container">
+                    <svg viewBox="0 0 140 140">
+                        <circle class="score-ring-bg" cx="70" cy="70" r="60"/>
+                        <circle class="score-ring-fg" id="scoreRing" cx="70" cy="70" r="60"
+                        stroke="#5b7b94" stroke-dasharray="377" stroke-dashoffset="188"/>
+                    </svg>
+                    <div class="score-ring-center">
+                        <div class="big-score" id="resultBigScore">50</div>
+                        <div class="out-of">/ 100 分</div>
+                    </div>
+                </div>
+                <div class="result-grade grade-c" id="resultGrade">🤔 勉强及格</div>
+            </div>
+
+            <!-- 各维度条形图 -->
+            <div style="margin-top:8px;">
+                <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;">📊 各维度得分一览</div>
+                <div class="bar-chart" id="barChart">
+                    <!-- 由JS动态生成 -->
+                </div>
+            </div>
+
+            <!-- 洞察分析 -->
+            <div style="margin-top:16px;">
+                <div style="font-weight:700;font-size:0.9rem;margin-bottom:8px;">🔍 关键洞察</div>
+                <div class="insight-grid" id="insightGrid">
+                    <!-- 由JS动态生成 -->
+                </div>
+            </div>
+
+            <!-- 综合建议 -->
+            <div class="advice-box" id="adviceBox" style="margin-top:12px;">
+                <div class="advice-title">💡 综合建议</div>
+                <div id="adviceContent">调整上方的滑块，查看针对您情况的详细建议。</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ============ 维度定义 ============
+            const dimensions = [{
+                id: 'salary',
+                icon: '💰',
+                name: '薪资满意程度',
+                desc: '相对于期望和市场水平',
+                weight: 2.0,
+                weightLabel: '高权重',
+                weightClass: 'high-weight',
+                lowLabel: '远低于预期',
+                highLabel: '超出预期',
+                getComment: (s) => s >= 8 ? '薪资很有竞争力，是重要加分项' :
+                    s >= 6 ? '薪资处于可接受范围，基本满意' :
+                    s >= 4 ? '薪资偏低，有一定落差感' : '薪资明显偏低，是主要痛点',
+            }, {
+                id: 'wlb',
+                icon: '⚖️',
+                name: '工作生活平衡',
+                desc: '加班强度与休息保障',
+                weight: 1.5,
+                weightLabel: '高权重',
+                weightClass: 'high-weight',
+                lowLabel: '996+严重加班',
+                highLabel: '几乎不加班',
+                getComment: (s) => s >= 8 ? '工作节奏健康，有充足个人时间' :
+                    s >= 6 ? '偶尔加班，整体可以接受' :
+                    s >= 4 ? '加班较多，生活受到一定影响' : '严重加班，身心俱疲',
+            }, {
+                id: 'growth',
+                icon: '📈',
+                name: '成长空间',
+                desc: '学习机会与晋升通道',
+                weight: 1.5,
+                weightLabel: '高权重',
+                weightClass: 'high-weight',
+                lowLabel: '完全学不到东西',
+                highLabel: '成长迅速机会多',
+                getComment: (s) => s >= 8 ? '成长路径清晰，能力持续提升' :
+                    s >= 6 ? '有一定学习机会，稳步前进' :
+                    s >= 4 ? '成长空间有限，容易停滞' : '几乎没有成长，技能在贬值',
+            }, {
+                id: 'commute',
+                icon: '🚇',
+                name: '通勤体验',
+                desc: '单程通勤时间与便利度',
+                weight: 1.0,
+                weightLabel: '中等权重',
+                weightClass: 'medium-weight',
+                lowLabel: '单程2小时+',
+                highLabel: '30分钟内',
+                getComment: (s) => s >= 8 ? '通勤轻松，每天多出不少时间' :
+                    s >= 6 ? '通勤尚可接受，偶尔不便' :
+                    s >= 4 ? '通勤较辛苦，消耗不少精力' : '通勤是巨大负担，严重影响生活质量',
+            }, {
+                id: 'interest',
+                icon: '❤️',
+                name: '工作兴趣度',
+                desc: '对工作内容的喜爱程度',
+                weight: 1.0,
+                weightLabel: '中等权重',
+                weightClass: 'medium-weight',
+                lowLabel: '完全不喜欢',
+                highLabel: '充满热情',
+                getComment: (s) => s >= 8 ? '做喜欢的事，每天有动力' :
+                    s >= 6 ? '内容还算有趣，不排斥' :
+                    s >= 4 ? '比较枯燥，缺乏热情' : '完全提不起兴趣，度日如年',
+            }, {
+                id: 'team',
+                icon: '🤝',
+                name: '团队氛围',
+                desc: '同事关系与协作环境',
+                weight: 0.8,
+                weightLabel: '中等权重',
+                weightClass: 'medium-weight',
+                lowLabel: '勾心斗角',
+                highLabel: '融洽互助',
+                getComment: (s) => s >= 8 ? '团队氛围很棒，工作愉快' :
+                    s >= 6 ? '同事关系还行，基本和谐' :
+                    s >= 4 ? '有些摩擦，氛围一般' : '团队氛围差，内耗严重',
+            }, {
+                id: 'benefits',
+                icon: '🎁',
+                name: '福利保障',
+                desc: '五险一金、补贴、假期等',
+                weight: 0.8,
+                weightLabel: '中等权重',
+                weightClass: 'medium-weight',
+                lowLabel: '几乎什么都没有',
+                highLabel: '非常完善',
+                getComment: (s) => s >= 8 ? '福利优厚，很有安全感' :
+                    s >= 6 ? '基础保障齐全，中规中矩' :
+                    s >= 4 ? '福利偏少，有些欠缺' : '福利很差，缺乏基本保障',
+            }, {
+                id: 'stability',
+                icon: '🏢',
+                name: '公司前景',
+                desc: '公司稳定性与行业前景',
+                weight: 0.6,
+                weightLabel: '一般权重',
+                weightClass: 'medium-weight',
+                lowLabel: '濒临倒闭/裁员',
+                highLabel: '行业龙头稳如磐石',
+                getComment: (s) => s >= 8 ? '公司很稳，长期发展可期' :
+                    s >= 6 ? '还算稳定，没有大风险' :
+                    s >= 4 ? '有些不确定因素，需关注' : '很不稳定，随时可能有变',
+            }, {
+                id: 'leader',
+                icon: '👤',
+                name: '领导关系',
+                desc: '直属上级的管理风格',
+                weight: 0.5,
+                weightLabel: '一般权重',
+                weightClass: 'medium-weight',
+                lowLabel: '难以沟通',
+                highLabel: '良师益友',
+                getComment: (s) => s >= 8 ? '领导很棒，是职场贵人' :
+                    s >= 6 ? '领导还行，相处无大碍' :
+                    s >= 4 ? '领导管理有些问题' : '领导是主要压力来源',
+            }, {
+                id: 'autonomy',
+                icon: '🕊️',
+                name: '工作自主权',
+                desc: '自由安排工作的程度',
+                weight: 0.3,
+                weightLabel: '一般权重',
+                weightClass: 'medium-weight',
+                lowLabel: '完全被管控',
+                highLabel: '高度自由',
+                getComment: (s) => s >= 8 ? '自主空间大，能按自己的节奏来' :
+                    s >= 6 ? '有一定自由度，还算灵活' :
+                    s >= 4 ? '自主权较少，比较受限' : '完全没有自主权，被 micromanage',
+            }, ];
+
+            const totalWeight = dimensions.reduce((sum, d) => sum + d.weight, 0); // 10.0
+
+            // ============ DOM引用 ============
+            const dimensionGrid = document.getElementById('dimensionGrid');
+            const barChart = document.getElementById('barChart');
+            const insightGrid = document.getElementById('insightGrid');
+            const adviceContent = document.getElementById('adviceContent');
+            const scoreRing = document.getElementById('scoreRing');
+            const resultBigScore = document.getElementById('resultBigScore');
+            const resultGrade = document.getElementById('resultGrade');
+            const headerScore = document.getElementById('headerScore');
+            const scorePill = document.getElementById('scorePill');
+            const btnReset = document.getElementById('btnReset');
+            const btnScrollToResult = document.getElementById('btnScrollToResult');
+            const resultSection = document.getElementById('resultSection');
+
+            const circumference = 2 * Math.PI * 60; // ≈377
+
+            // 状态存储
+            const scores = {};
+            dimensions.forEach(d => { scores[d.id] = 5; }); // 默认5分
+
+            // ============ 构建维度卡片 ============
+            function buildDimensionCards() {
+                dimensionGrid.innerHTML = '';
+                dimensions.forEach((dim, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'dimension-card';
+                    card.innerHTML = `
+                    <div class="dim-card-header">
+                      <div class="dim-info">
+                        <div class="dim-icon">${dim.icon}</div>
+                        <div>
+                          <div class="dim-name">${dim.name}</div>
+                          <div class="dim-desc">${dim.desc}</div>
+                        </div>
+                      </div>
+                      <span class="weight-badge ${dim.weightClass}">权重 ${dim.weight.toFixed(1)}</span>
+                      <span class="dim-score-display score-mid" id="scoreDisplay_${dim.id}">5</span>
+                    </div>
+                    <div class="slider-container">
+                      <div class="slider-labels">
+                        <span>1 · ${dim.lowLabel}</span>
+                        <span>${dim.highLabel} · 10</span>
+                      </div>
+                      <input type="range" min="1" max="10" step="1" value="5"
+                        id="slider_${dim.id}" data-dim-id="${dim.id}"
+                        aria-label="${dim.name}">
+                      <div class="tick-marks">
+                        ${Array.from({length:10}, (_,i)=>`<span></span>`).join('')}
+                      </div>
+                    </div>
+                  `;
+                    dimensionGrid.appendChild(card);
+
+                    // 事件绑定
+                    const slider = card.querySelector(`#slider_${dim.id}`);
+                    slider.addEventListener('input', function() {
+                        const val = parseInt(this.value);
+                        scores[dim.id] = val;
+                        updateScoreDisplay(dim.id, val);
+                        updateAllResults();
+                        highlightActiveCard(card);
+                    });
+                    // 触摸/点击时高亮卡片
+                    slider.addEventListener('focus', () => highlightActiveCard(card));
+                    slider.addEventListener('blur', () => card.classList.remove('active-dim'));
+                });
+            }
+
+            function highlightActiveCard(card) {
+                document.querySelectorAll('.dimension-card.active-dim').forEach(c => c.classList.remove(
+                    'active-dim'));
+                card.classList.add('active-dim');
+                // 短暂延迟后移除高亮
+                clearTimeout(card._highlightTimeout);
+                card._highlightTimeout = setTimeout(() => card.classList.remove('active-dim'), 1500);
+            }
+
+            function updateScoreDisplay(dimId, val) {
+                const display = document.getElementById(`scoreDisplay_${dimId}`);
+                if (!display) return;
+                display.textContent = val;
+                display.classList.remove('score-high', 'score-mid', 'score-low');
+                if (val >= 8) display.classList.add('score-high');
+                else if (val >= 5) display.classList.add('score-mid');
+                else display.classList.add('score-low');
+            }
+
+            // ============ 计算总分 ============
+            function calculateTotalScore() {
+                let total = 0;
+                dimensions.forEach(d => {
+                    total += scores[d.id] * d.weight;
+                });
+                // 满分 = 10 * totalWeight = 100
+                return Math.round(total); // 范围10-100
+            }
+
+            // ============ 获取等级 ============
+            function getGradeInfo(score) {
+                if (score >= 90) return {
+                    grade: 'S',
+                        label: '🏆 梦寐以求的工作',
+                        cssClass: 'grade-s',
+                        color: '#2d6a3f',
+                        ringColor: '#5a9e6f',
+                        pillGlow: 'glow-green',
+                        summary: '这份工作在几乎所有维度上都表现优异，是难得的好机会，强烈建议珍惜！'
+                };
+                if (score >= 78) return {
+                    grade: 'A',
+                        label: '👍 非常值得',
+                        cssClass: 'grade-a',
+                        color: '#3d7a4f',
+                        ringColor: '#5a9e6f',
+                        pillGlow: 'glow-green',
+                        summary: '整体非常不错，各方面都比较均衡，是一份值得投入的好工作。'
+                };
+                if (score >= 65) return {
+                    grade: 'B',
+                        label: '✅ 比较值得',
+                        cssClass: 'grade-b',
+                        color: '#3d5d72',
+                        ringColor: '#5b7b94',
+                        pillGlow: '',
+                        summary: '整体还不错，有一些亮点，但也存在可改进的空间，总体值得继续。'
+                };
+                if (score >= 50) return {
+                    grade: 'C',
+                        label: '🤔 勉强及格',
+                        cssClass: 'grade-c',
+                        color: '#9a6e20',
+                        ringColor: '#d4a24e',
+                        pillGlow: 'glow-yellow',
+                        summary: '处于及格线附近，有亮点也有明显短板，需要认真权衡是否值得继续投入。'
+                };
+                if (score >= 35) return {
+                    grade: 'D',
+                        label: '⚠️ 不太值得',
+                        cssClass: 'grade-d',
+                        color: '#b0552a',
+                        ringColor: '#d47e4e',
+                        pillGlow: 'glow-orange',
+                        summary: '多个维度表现不佳，这份工作可能正在消耗你，建议开始寻找更好的机会。'
+                };
+                if (score >= 20) return {
+                    grade: 'E',
+                        label: '🔴 很不值得',
+                        cssClass: 'grade-e',
+                        color: '#9a3535',
+                        ringColor: '#c55555',
+                        pillGlow: 'glow-red',
+                        summary: '大部分维度都令人不满意，继续下去可能会对身心健康产生负面影响。'
+                };
+                return {
+                    grade: 'F',
+                    label: '💀 赶紧跑',
+                    cssClass: 'grade-f',
+                    color: '#7a2020',
+                    ringColor: '#c55555',
+                    pillGlow: 'glow-red',
+                    summary: '这份工作几乎在所有方面都很糟糕，强烈建议立即寻找新机会，尽早离开。'
+                };
+            }
+
+            // ============ 更新所有结果 ============
+            function updateAllResults() {
+                const totalScore = calculateTotalScore();
+                const gradeInfo = getGradeInfo(totalScore);
+
+                // 顶部pill
+                headerScore.textContent = totalScore;
+                scorePill.classList.remove('glow-green', 'glow-yellow', 'glow-orange', 'glow-red');
+                if (gradeInfo.pillGlow) scorePill.classList.add(gradeInfo.pillGlow);
+                // 根据分数调整pill内数字颜色
+                headerScore.style.color = gradeInfo.ringColor;
+
+                // 大分数
+                resultBigScore.textContent = totalScore;
+                resultBigScore.style.color = gradeInfo.ringColor;
+
+                // 环形图
+                const offset = circumference * (1 - totalScore / 100);
+                scoreRing.setAttribute('stroke-dasharray', circumference);
+                scoreRing.setAttribute('stroke-dashoffset', offset);
+                scoreRing.setAttribute('stroke', gradeInfo.ringColor);
+
+                // 等级标签
+                resultGrade.textContent = gradeInfo.label;
+                resultGrade.className = 'result-grade ' + gradeInfo.cssClass;
+
+                // 条形图
+                updateBarChart(totalScore);
+
+                // 洞察
+                updateInsights(totalScore);
+
+                // 建议
+                updateAdvice(totalScore, gradeInfo);
+            }
+
+            // ============ 条形图 ============
+            function updateBarChart(totalScore) {
+                // 按得分降序排列
+                const sorted = [...dimensions].sort((a, b) => scores[b.id] - scores[a.id]);
+                barChart.innerHTML = sorted.map(d => {
+                    const s = scores[d.id];
+                    const pct = s * 10; // 1-10映射到10%-100%
+                    let barColor;
+                    if (s >= 8) barColor = '#5a9e6f';
+                    else if (s >= 6) barColor = '#7aaf8d';
+                    else if (s >= 5) barColor = '#d4a24e';
+                    else if (s >= 3) barColor = '#d47e4e';
+                    else barColor = '#c55555';
+                    return `
+                  <div class="bar-row">
+                    <span class="bar-label" title="${d.name}">${d.icon} ${d.name}</span>
+                    <div class="bar-track">
+                      <div class="bar-fill" style="width:${pct}%;background:${barColor};"></div>
+                    </div>
+                    <span class="bar-val" style="color:${barColor}">${s}</span>
+                  </div>
+                `;
+                }).join('');
+            }
+
+            // ============ 洞察分析 ============
+            function updateInsights(totalScore) {
+                const strengths = dimensions.filter(d => scores[d.id] >= 8);
+                const weaknesses = dimensions.filter(d => scores[d.id] <= 4);
+
+                let html = '';
+                if (strengths.length > 0) {
+                    html += strengths.map(d => `
+                  <div class="insight-item strength">
+                    <span class="insight-icon">✅</span>
+                    <span><strong>优势：${d.name}</strong> — ${d.getComment(scores[d.id])}</span>
+                  </div>
+                `).join('');
+                } else {
+                    html += `
+                <div class="insight-item strength" style="opacity:0.7;">
+                  <span class="insight-icon">📝</span>
+                  <span>暂无突出优势项（得分≥8的维度），可以思考哪些方面值得肯定。</span>
+                </div>`;
+                }
+                if (weaknesses.length > 0) {
+                    html += weaknesses.map(d => `
+                  <div class="insight-item weakness">
+                    <span class="insight-icon">⚠️</span>
+                    <span><strong>短板：${d.name}</strong> — ${d.getComment(scores[d.id])}（权重${d.weight.toFixed(1)}，拖分约${Math.round((10-scores[d.id])*d.weight)}分）</span>
+                  </div>
+                `).join('');
+                } else {
+                    html += `
+                <div class="insight-item weakness" style="opacity:0.6;border-left-color:#ccc;background:#fafaf8;">
+                  <span class="insight-icon">👍</span>
+                  <span>暂无严重短板（所有维度得分≥5），整体表现均衡。</span>
+                </div>`;
+                }
+                insightGrid.innerHTML = html;
+            }
+
+            // ============ 综合建议 ============
+            function updateAdvice(totalScore, gradeInfo) {
+                const weaknesses = dimensions.filter(d => scores[d.id] <= 4);
+                const highWeightWeak = weaknesses.filter(d => d.weight >= 1.0);
+                let advice = '';
+
+                advice += `<p style="margin-bottom:8px;">${gradeInfo.summary}</p>`;
+
+                if (totalScore >= 78) {
+                    advice +=
+                        '<p>🎯 这份工作综合价值较高。建议关注那些得分相对偏低的维度，看看是否可以通过主动沟通或调整来进一步优化体验。</p>';
+                } else if (totalScore >= 65) {
+                    advice +=
+                        '<p>📋 整体尚可但不算突出。建议重点审视得分低于6分的维度，评估这些短板是否可以通过内部调整来改善，或者是否是你能够长期接受的状况。</p>';
+                } else if (totalScore >= 50) {
+                    advice +=
+                        '<p>⚖️ 处于临界状态。如果高权重维度（薪资、成长、生活平衡）得分偏低，建议认真考虑是否值得继续。可以尝试与上级沟通改善条件，同时开始留意其他机会。</p>';
+                } else if (totalScore >= 35) {
+                    advice +=
+                        '<p>🚩 多个维度亮起红灯。建议将这份工作视为过渡，积极寻找更合适的机会。在离职前尽量积累资源和经验，为下一步做好准备。</p>';
+                } else {
+                    advice +=
+                        '<p>🆘 这份工作对你可能弊大于利。优先关注自身身心健康，尽快制定退出计划。即使暂时无法离开，也要设定明确的底线和时间节点。</p>';
+                }
+
+                if (highWeightWeak.length > 0) {
+                    advice +=
+                        `<p style="margin-top:8px;color:#b0552a;">⚠️ <strong>特别注意：</strong>${highWeightWeak.map(d=>d.name).join('、')}属于高权重维度但得分偏低，对总分影响较大。如果这些是短期内无法改变的硬伤，建议重点考量。</p>`;
+                }
+
+                // 差距量化
+                const gap = 100 - totalScore;
+                if (gap >= 30) {
+                    advice +=
+                        `<p style="margin-top:6px;color:var(--text-secondary);">📉 当前得分与满分差距<strong>${gap}分</strong>，主要拖分项可在上方条形图中查看（红色/橙色条）。</p>`;
+                }
+
+                adviceContent.innerHTML = advice;
+            }
+
+            // ============ 重置按钮 ============
+            btnReset.addEventListener('click', () => {
+                dimensions.forEach(d => {
+                    scores[d.id] = 5;
+                    const slider = document.getElementById(`slider_${d.id}`);
+                    if (slider) {
+                        slider.value = 5;
+                    }
+                    updateScoreDisplay(d.id, 5);
+                });
+                document.querySelectorAll('.dimension-card.active-dim').forEach(c => c.classList.remove(
+                    'active-dim'));
+                updateAllResults();
+                // 滚动到顶部评分区
+                document.getElementById('ratingSection').scrollIntoView({ behavior: 'smooth',
+                    block: 'start' });
+            });
+
+            // ============ 查看结果按钮 ============
+            btnScrollToResult.addEventListener('click', () => {
+                resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+
+            // ============ 初始化 ============
+            function init() {
+                buildDimensionCards();
+                // 初始化所有得分显示
+                dimensions.forEach(d => {
+                    updateScoreDisplay(d.id, 5);
+                });
+                updateAllResults();
+            }
+
+            // ============ 启动 ============
+            init();
+
+            console.log('💼 工作价值评估器已就绪');
+            console.log('   • 10个维度 | 加权评分 | 满分100分');
+            console.log('   • 拖动滑块实时查看结果');
+            console.log('   • 默认全部5分 = 50分（及格线边缘）');
+            console.log('   • 总分范围：10~100分');
+            console.log('   • 等级：S(90+) A(78+) B(65+) C(50+) D(35+) E(20+) F(<20)');
+        })();
+    </script>
+</body>
+</html>
