@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>工作价值评估器 · 城市精准版</title>
+  <title>这B班上的值不值</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
@@ -71,7 +71,6 @@
     .dim-info { display:flex; align-items:center; gap:8px; min-width:0; flex:1; }
     .dim-icon { font-size:1.3rem; width:32px; height:32px; display:flex; align-items:center; justify-content:center; background:#f0ece6; border-radius:50%; }
     .dim-name { font-weight:600; font-size:0.85rem; }
-    .dim-desc { font-size:0.68rem; color:var(--text-secondary); }
     .weight-badge { font-size:0.62rem; background:#f0ece6; color:#8a8278; padding:2px 8px; border-radius:20px; font-weight:600; white-space:nowrap; }
     .weight-badge.high-weight { background:#fef3e0; color:#b8781e; }
     .dim-score { font-size:1.3rem; font-weight:800; font-family:var(--font-mono); width:30px; text-align:center; }
@@ -132,7 +131,6 @@
 
     .share-buttons { display:flex; gap:10px; justify-content:center; margin-top:12px; flex-wrap:wrap; }
 
-    /* 纯净分享卡片样式 */
     .share-card-overlay {
       position: fixed; top:0; left:0; width:100%; height:100%;
       background: white; z-index: 9999; display:flex; align-items:center;
@@ -209,8 +207,7 @@
         <div id="adviceContent"></div>
       </div>
       <div class="share-buttons">
-        <button class="btn" id="btnShare">📤 分享结果</button>
-        <button class="btn btn-primary" id="btnScreenshot">📸 保存纯净卡片</button>
+        <button class="btn btn-primary" id="btnScreenshot">📸 保存截图</button>
       </div>
     </div>
   </div>
@@ -218,17 +215,17 @@
   <script>
     (function() {
       const FALLBACK_CITY_DATA = {
-        '北京': { avgSalary: 38000, commuteBase: 18, commuteStep: 6 },
-        '上海': { avgSalary: 37000, commuteBase: 18, commuteStep: 6 },
-        '广州': { avgSalary: 32000, commuteBase: 16, commuteStep: 5 },
-        '深圳': { avgSalary: 36000, commuteBase: 18, commuteStep: 6 },
-        '杭州': { avgSalary: 30000, commuteBase: 15, commuteStep: 5 },
-        '成都': { avgSalary: 27000, commuteBase: 14, commuteStep: 4 },
-        '武汉': { avgSalary: 26000, commuteBase: 14, commuteStep: 4 },
-        '南京': { avgSalary: 29000, commuteBase: 15, commuteStep: 5 },
-        '长沙': { avgSalary: 24000, commuteBase: 12, commuteStep: 3 },
-        '厦门': { avgSalary: 26000, commuteBase: 14, commuteStep: 4 },
-        '其他': { avgSalary: 22000, commuteBase: 12, commuteStep: 4 }
+        '北京': { avgSalary: 23500, commuteBase: 35, commuteStep: 8 },
+        '上海': { avgSalary: 22800, commuteBase: 33, commuteStep: 7 },
+        '广州': { avgSalary: 19000, commuteBase: 30, commuteStep: 6 },
+        '深圳': { avgSalary: 22200, commuteBase: 30, commuteStep: 7 },
+        '杭州': { avgSalary: 18500, commuteBase: 28, commuteStep: 6 },
+        '成都': { avgSalary: 15200, commuteBase: 26, commuteStep: 5 },
+        '武汉': { avgSalary: 14800, commuteBase: 26, commuteStep: 5 },
+        '南京': { avgSalary: 16800, commuteBase: 28, commuteStep: 6 },
+        '长沙': { avgSalary: 13200, commuteBase: 24, commuteStep: 4 },
+        '厦门': { avgSalary: 14500, commuteBase: 25, commuteStep: 5 },
+        '其他': { avgSalary: 11500, commuteBase: 22, commuteStep: 4 }
       };
       let currentCityData = FALLBACK_CITY_DATA['深圳'];
 
@@ -329,14 +326,12 @@
         elements.resultGrade.className = 'grade-badge ' + grade.cssClass;
         elements.humorQuote.textContent = '“' + grade.humor + '”';
 
-        // 条形图
         const sorted = [...dimensions].sort((a,b)=>scores[b.id]-scores[a.id]);
         elements.barChart.innerHTML = sorted.map(d=>{
           const s = scores[d.id];
           return `<div class="bar-row"><span class="bar-label">${d.icon} ${d.name}</span><div class="bar-track"><div class="bar-fill" style="width:${s*10}%;background:${s>=8?'#5a9e6f':s>=5?'#d4a24e':'#c55555'};"></div></div><span class="bar-val">${s}</span></div>`;
         }).join('');
 
-        // 洞察
         const strengths = dimensions.filter(d=>scores[d.id]>=8);
         const weaknesses = dimensions.filter(d=>scores[d.id]<=4);
         let insightHtml = '';
@@ -355,7 +350,6 @@
         elements.adviceContent.innerHTML = `<p>${advice}</p>`;
       }
 
-      // 构建输入卡片
       function buildCards() {
         const grid = document.getElementById('dimensionGrid');
         grid.innerHTML = '';
@@ -383,13 +377,11 @@
         });
       }
 
-      // 城市切换
       elements.citySelect.addEventListener('change', () => {
         currentCityData = FALLBACK_CITY_DATA[elements.citySelect.value] || FALLBACK_CITY_DATA['其他'];
         updateUI();
       });
 
-      // 重置
       document.getElementById('btnReset').addEventListener('click', ()=>{
         userInput.salary=15000; userInput.overtime=5; userInput.commute=40;
         dimensions.forEach(d=>{ if(d.type==='select') userInput[d.id]=2; });
@@ -406,28 +398,11 @@
         document.getElementById('resultSection').scrollIntoView({behavior:'smooth'});
       });
 
-      // ---------- 分享功能优化 ----------
-      document.getElementById('btnShare').addEventListener('click', async ()=>{
-        const total = calculateTotal(calculateAllScores());
-        const grade = getGradeInfo(total);
-        const city = elements.citySelect.value;
-        const shareText = `【工作价值评估】我在${city}的这份工作得分：${total}/100分 ${grade.label} —— ${grade.humor}`;
-        if (navigator.share) {
-          try {
-            await navigator.share({ title: '工作价值评估', text: shareText, url: window.location.href });
-          } catch (e) { console.log('分享取消'); }
-        } else {
-          await navigator.clipboard.writeText(shareText);
-          alert('结果已复制，可直接粘贴分享给好友！');
-        }
-      });
-
-      // 纯净卡片截图
+      // 截图截图
       document.getElementById('btnScreenshot').addEventListener('click', async ()=>{
         const total = calculateTotal(calculateAllScores());
         const grade = getGradeInfo(total);
         const city = elements.citySelect.value;
-        // 创建纯净分享卡片
         const overlay = document.createElement('div');
         overlay.className = 'share-card-overlay';
         overlay.innerHTML = `
@@ -448,7 +423,7 @@
           link.download = `工作评估_${city}_${total}分.png`;
           link.href = canvas.toDataURL('image/png');
           link.click();
-          alert('纯净卡片已保存，快去分享吧！');
+          alert('截图已保存，快去分享吧！');
         } catch (e) {
           alert('截图失败，可尝试手动截图。');
         } finally {
@@ -456,7 +431,6 @@
         }
       });
 
-      // 初始化
       buildCards();
       updateUI();
     })();
