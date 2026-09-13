@@ -4,633 +4,368 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="format-detection" content="telephone=no">
-<meta name="theme-color" content="#f4efe6">
+<meta name="theme-color" content="#fdfaf5">
 <title>李建 &amp; 杨丽屏 · 婚礼邀请函</title>
-
-<!-- 微信分享卡片信息 -->
-<meta property="og:title" content="李建 & 杨丽屏 诚邀您参加婚礼">
-<meta property="og:description" content="2026年10月6日 12:00 · 赤壁凯丰禧宴">
-<meta property="og:type" content="website">
-
+<meta name="description" content="2026年10月6日 12:00 · 湖北省赤壁市凯丰禧宴，诚邀您共同见证我们的幸福时刻。">
+<meta property="og:title" content="李建 &amp; 杨丽屏 · 婚礼邀请函">
+<meta property="og:description" content="2026年10月6日 12:00 · 湖北省赤壁市凯丰禧宴">
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-
   :root{
     --gold:#b08d57;
-    --gold-d:#8f6f42;
     --gold-l:#d9c39a;
-    --ink:#3d3228;
-    --ink-2:#8a7a6a;
-    --red:#a8322d;
-    --red-l:#c0453c;
+    --ink:#463a2e;
+    --ink-2:#7c6b5b;
+    --bg:#fdfaf5;
+    --pink:#e9a7b0;
   }
-
   html{-webkit-text-size-adjust:100%;}
-
   body{
-    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
+    background:var(--bg);
     color:var(--ink);
-    min-height:100vh;
-    background:
-      radial-gradient(circle at 12% 6%, #fdf7ea 0%, rgba(253,247,234,0) 46%),
-      radial-gradient(circle at 90% 94%, #f7ece0 0%, rgba(247,236,224,0) 50%),
-      #f4efe6;
-    background-attachment:fixed;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding:34px 16px 60px;
-    -webkit-font-smoothing:antialiased;
-    -webkit-tap-highlight-color:transparent;
+    font-family:"Songti SC","STSong","Noto Serif SC","Source Han Serif SC","SimSun",serif;
+    line-height:1.9;
     overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
   }
-  body.locked{overflow:hidden;}
 
-  /* ============ 页头 ============ */
-  .page-head{text-align:center;margin-bottom:22px;max-width:400px;}
+  /* ---------- 飘落花瓣 ---------- */
+  .petals{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+  .petal{
+    position:absolute;top:-8vh;display:block;
+    background:radial-gradient(circle at 30% 30%,#fce4e8,#e9a7b0);
+    border-radius:50% 0 50% 50%;
+    animation:fall linear infinite;
+  }
+  @keyframes fall{
+    0%{transform:translateY(-10vh) rotate(0deg);opacity:0;}
+    10%{opacity:.85;}
+    90%{opacity:.5;}
+    100%{transform:translateY(115vh) rotate(720deg);opacity:0;}
+  }
+
+  /* ---------- 封面 ---------- */
+  .cover{
+    position:relative;z-index:2;
+    min-height:100vh;min-height:100svh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:80px 34px;
+    background:radial-gradient(ellipse at 50% 0%,#fff7ec 0%,rgba(255,247,236,0) 65%);
+  }
+  .frame{position:absolute;inset:16px;border:1px solid rgba(176,141,87,.38);pointer-events:none;}
+  .frame::after{content:"";position:absolute;inset:6px;border:1px solid rgba(176,141,87,.16);}
 
   .eyebrow{
-    font-size:11px;
-    letter-spacing:.3em;
-    text-indent:.3em;
-    color:var(--gold);
-    margin-bottom:9px;
-    font-weight:500;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:10px;letter-spacing:.42em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:34px;text-indent:.42em;
   }
-  .page-title{
-    font-family:"Songti SC","STSong","Noto Serif SC",serif;
-    font-size:21px;
-    font-weight:600;
-    letter-spacing:.16em;
-    text-indent:.16em;
-    color:var(--ink);
-    margin-bottom:8px;
+  .names{display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:26px;}
+  .name{
+    font-size:clamp(30px,9.5vw,44px);
+    letter-spacing:.2em;text-indent:.2em;
+    font-weight:500;color:var(--ink);line-height:1.35;
   }
-  .page-desc{font-size:12px;letter-spacing:.08em;color:var(--ink-2);}
+  .heart{
+    color:var(--gold-l);font-size:15px;line-height:1;margin:8px 0;
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:.65;}50%{transform:scale(1.28);opacity:1;}}
 
-  /* ============ 微信聊天模拟 ============ */
-  .wechat{
-    width:100%;
-    max-width:400px;
-    background:#ededed;
-    border-radius:14px;
-    overflow:hidden;
-    box-shadow:
-      0 26px 54px -30px rgba(90,66,34,.55),
-      0 0 0 1px rgba(0,0,0,.04);
-    margin-bottom:22px;
-  }
+  .rule{width:56px;height:1px;background:var(--gold-l);margin:0 auto 22px;}
+  .rule-sm{width:40px;height:1px;background:rgba(176,141,87,.5);margin:26px auto;}
 
-  .wx-bar{
-    position:relative;
-    display:flex;
-    align-items:center;
-    height:46px;
-    padding:0 13px;
-    background:#ededed;
-    border-bottom:1px solid rgba(0,0,0,.06);
+  .date{
+    font-size:20px;letter-spacing:.22em;text-indent:.22em;
+    color:var(--gold);margin-bottom:10px;
+    font-variant-numeric:tabular-nums;
   }
-  .wx-back{
-    font-size:26px;
-    line-height:1;
-    color:#1a1a1a;
-    transform:translateY(-2px);
-  }
-  .wx-bar-title{
-    position:absolute;
-    left:50%;
+  .place{font-size:13px;letter-spacing:.26em;text-indent:.26em;color:var(--ink-2);}
+
+  .scroll-hint{
+    position:absolute;left:50%;bottom:calc(32px + env(safe-area-inset-bottom));
     transform:translateX(-50%);
-    font-size:16px;
-    font-weight:600;
-    color:#1a1a1a;
-    letter-spacing:.02em;
-    white-space:nowrap;
-    max-width:60%;
-    overflow:hidden;
-    text-overflow:ellipsis;
+    font-size:10px;letter-spacing:.34em;text-indent:.34em;
+    color:var(--gold);opacity:.85;
+    animation:bob 2s ease-in-out infinite;white-space:nowrap;
   }
-  .wx-more{
-    margin-left:auto;
-    font-size:15px;
-    letter-spacing:1.5px;
-    color:#1a1a1a;
-    line-height:1;
+  @keyframes bob{0%,100%{transform:translate(-50%,0);}50%{transform:translate(-50%,7px);}}
+
+  /* 封面入场动画 */
+  .anim{opacity:0;animation:fadeUp .95s cubic-bezier(.2,.7,.3,1) forwards;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:none;}}
+  .d1{animation-delay:.15s;} .d2{animation-delay:.4s;} .d3{animation-delay:.6s;}
+  .d4{animation-delay:.75s;} .d5{animation-delay:.95s;} .d6{animation-delay:1.1s;}
+  .d7{animation-delay:1.3s;}
+
+  /* ---------- 通用区块 ---------- */
+  .section{position:relative;z-index:2;padding:34px 24px 66px;text-align:center;}
+
+  .sec-title{
+    font-size:12px;letter-spacing:.5em;text-indent:.5em;
+    color:var(--gold);margin-bottom:26px;
   }
 
-  .wx-chat{
-    padding:18px 13px 24px;
-    min-height:176px;
-    display:flex;
-    flex-direction:column;
-    gap:16px;
+  .card{
+    position:relative;max-width:520px;margin:0 auto;
+    background:#fff;border:1px solid rgba(176,141,87,.22);
+    border-radius:4px;padding:46px 26px;
+    box-shadow:0 18px 44px -30px rgba(120,90,50,.45);
   }
+  .card::before{
+    content:"";position:absolute;inset:8px;
+    border:1px solid rgba(176,141,87,.13);pointer-events:none;
+  }
+  .lead{font-size:14.5px;letter-spacing:.16em;text-indent:.16em;color:var(--ink-2);margin:10px 0;}
+  .big{
+    font-size:21px;letter-spacing:.12em;text-indent:.12em;
+    color:var(--ink);margin:6px 0;
+  }
+  .sub{font-size:13.5px;letter-spacing:.14em;text-indent:.14em;color:var(--ink-2);}
 
-  .wx-row{display:flex;gap:9px;align-items:flex-start;}
+  /* ---------- 信息 ---------- */
+  .info{max-width:520px;margin:0 auto;}
+  .info-item{margin-bottom:36px;}
+  .info-item:last-of-type{margin-bottom:8px;}
+  .info-label{font-size:11px;letter-spacing:.42em;text-indent:.42em;color:var(--gold);margin-bottom:10px;}
+  .info-main{font-size:18px;letter-spacing:.1em;text-indent:.1em;color:var(--ink);margin-bottom:6px;}
+  .info-sub{font-size:13px;letter-spacing:.1em;text-indent:.1em;color:var(--ink-2);}
 
-  .wx-avatar{
-    width:38px;height:38px;flex:0 0 38px;
-    border-radius:5px;
-    display:flex;align-items:center;justify-content:center;
-    font-family:"Songti SC","STSong",serif;
-    font-size:19px;
-    color:#f2dbaa;
-    background:linear-gradient(150deg,var(--red-l),#93261f);
-    box-shadow:0 3px 8px -4px rgba(150,40,35,.75);
-  }
-
-  /* 链接卡片 */
-  .wx-bubble{
-    position:relative;
-    display:flex;
-    max-width:290px;
-    background:#fff;
-    border-radius:5px;
-    overflow:hidden;
-    box-shadow:0 1px 3px rgba(0,0,0,.09);
-  }
-  .wx-bubble::before{
-    content:"";
-    position:absolute;
-    left:-5px;top:14px;
-    width:0;height:0;
-    border-top:5px solid transparent;
-    border-bottom:5px solid transparent;
-    border-right:5px solid #fff;
-  }
-
-  .wx-thumb{
-    width:78px;height:78px;flex:0 0 78px;
-    display:flex;align-items:center;justify-content:center;
-    position:relative;
-    background:linear-gradient(150deg,var(--red-l) 0%,#93261f 100%);
-  }
-  .wx-thumb::before{
-    content:"";
-    position:absolute;
-    inset:7px;
-    border:1px solid rgba(242,219,170,.55);
-    border-radius:2px;
-  }
-  .wx-thumb span{
-    font-family:"Songti SC","STSong",serif;
-    font-size:34px;
-    line-height:1;
-    color:#f2dbaa;
-    position:relative;
-    z-index:1;
-    transform:translateY(-1px);
-  }
-
-  .wx-info{
-    flex:1;
-    min-width:0;
-    padding:10px 12px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    gap:5px;
-  }
-  .wx-info-title{
-    font-size:15px;
-    font-weight:600;
-    line-height:1.35;
-    color:#1a1a1a;
-    letter-spacing:.01em;
-    display:-webkit-box;
-    -webkit-line-clamp:2;
-    -webkit-box-orient:vertical;
-    overflow:hidden;
-  }
-  .wx-info-desc{
-    font-size:11.5px;
-    line-height:1.4;
-    color:#9a9a9a;
-    letter-spacing:.01em;
-    display:-webkit-box;
-    -webkit-line-clamp:2;
-    -webkit-box-orient:vertical;
-    overflow:hidden;
-  }
-
-  /* ============ 触发按钮 ============ */
-  .share-btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:9px;
-    padding:15px 38px;
-    font-family:inherit;
-    font-size:15px;
-    font-weight:500;
-    letter-spacing:.16em;
-    text-indent:.16em;
-    color:#fff;
-    border:none;
+  .btn{
+    display:inline-block;
+    padding:13px 32px;margin-top:16px;
+    font-family:inherit;font-size:14px;
+    letter-spacing:.22em;text-indent:.22em;text-align:center;
+    color:#fff;text-decoration:none;border:none;cursor:pointer;
+    background:linear-gradient(135deg,#c9aa77,#a9854f);
     border-radius:999px;
-    cursor:pointer;
-    background:linear-gradient(135deg,#c9aa77 0%,#a9854f 100%);
-    box-shadow:0 16px 32px -18px rgba(160,120,60,.95);
+    box-shadow:0 12px 24px -14px rgba(160,120,60,.95);
     transition:transform .18s ease,box-shadow .18s ease;
-    -webkit-tap-highlight-color:transparent;
   }
-  .share-btn:active{
-    transform:scale(.97);
-    box-shadow:0 8px 18px -16px rgba(160,120,60,.9);
+  .btn:active{transform:scale(.97);box-shadow:0 6px 14px -12px rgba(160,120,60,.9);}
+  .btn.ghost{
+    background:transparent;color:var(--gold);
+    border:1px solid rgba(176,141,87,.5);
+    box-shadow:none;margin-left:8px;
   }
-  .share-btn svg{
-    width:19px;height:19px;
-    stroke:#fff;fill:none;
-    stroke-width:1.9;
-    stroke-linecap:round;
-    stroke-linejoin:round;
+  @media (max-width:360px){ .btn.ghost{margin-left:0;} }
+
+  /* ---------- 倒计时 ---------- */
+  .countdown{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;}
+  .cd-item{
+    min-width:66px;padding:16px 4px;
+    background:#fff;border:1px solid rgba(176,141,87,.22);border-radius:4px;
+  }
+  .cd-num{
+    font-size:26px;line-height:1.1;color:var(--gold);
+    font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .cd-label{font-size:11px;letter-spacing:.16em;text-indent:.16em;color:var(--ink-2);margin-top:6px;}
+
+  /* ---------- 结尾 ---------- */
+  .finale{position:relative;z-index:2;padding:60px 30px 96px;text-align:center;}
+  .finale-text{font-size:14.5px;letter-spacing:.18em;text-indent:.18em;color:var(--ink-2);margin:8px 0;}
+  .finale-name{
+    font-size:24px;letter-spacing:.18em;text-indent:.18em;
+    color:var(--ink);margin:22px 0 8px;
+  }
+  .finale-sub{font-size:12px;letter-spacing:.4em;text-indent:.4em;color:var(--gold);}
+  .finale-tip{
+    margin-top:46px;font-size:11.5px;letter-spacing:.14em;
+    color:rgba(124,107,91,.7);line-height:2;
   }
 
-  /* ============ 遮罩 ============ */
-  .sheet-mask{
-    position:fixed;
-    inset:0;
-    z-index:50;
-    background:rgba(30,20,10,.45);
-    opacity:0;
-    visibility:hidden;
-    transition:opacity .32s ease,visibility .32s ease;
+  /* ---------- 滚动淡入 ---------- */
+  .reveal{
+    opacity:0;transform:translateY(26px);
+    transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.3,1);
   }
-  .sheet-mask.open{opacity:1;visibility:visible;}
+  .reveal.in{opacity:1;transform:none;}
 
-  /* ============ 分享面板 ============ */
-  .sheet{
-    position:fixed;
-    left:0;right:0;bottom:0;
-    z-index:60;
-    width:100%;
-    max-width:480px;
-    margin:0 auto;
-    padding:0 16px calc(16px + env(safe-area-inset-bottom));
-    background:#fbf7f0;
-    border-radius:18px 18px 0 0;
-    box-shadow:0 -10px 44px -14px rgba(80,58,28,.3);
-    transform:translateY(105%);
-    transition:transform .42s cubic-bezier(.32,.72,.35,1);
-    will-change:transform;
-  }
-  .sheet.open{transform:translateY(0);}
-
-  /* 顶部金色装饰线 */
-  .sheet-grip{
-    width:40px;
-    height:4px;
-    border-radius:2px;
-    background:rgba(176,141,87,.32);
-    margin:11px auto 2px;
-  }
-
-  /* 面板顶部预览 */
-  .sheet-preview{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:13px 14px;
-    margin:13px 0 6px;
-    border-radius:11px;
-    background:linear-gradient(135deg,#fffdf8 0%,#f7edda 100%);
-    border:1px solid rgba(176,141,87,.28);
-  }
-  .sp-thumb{
-    width:52px;height:52px;flex:0 0 52px;
-    border-radius:7px;
-    display:flex;align-items:center;justify-content:center;
-    font-family:"Songti SC","STSong",serif;
-    font-size:25px;
-    color:#f2dbaa;
-    background:linear-gradient(150deg,var(--red-l),#93261f);
-    box-shadow:0 6px 14px -8px rgba(150,40,35,.8);
-    position:relative;
-  }
-  .sp-thumb::before{
-    content:"";
-    position:absolute;
-    inset:5px;
-    border:1px solid rgba(242,219,170,.5);
-    border-radius:3px;
-  }
-  .sp-info{flex:1;min-width:0;}
-  .sp-name{
-    font-family:"Songti SC","STSong",serif;
-    font-size:15.5px;
-    font-weight:600;
-    letter-spacing:.05em;
-    color:var(--ink);
-    margin-bottom:4px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .sp-name em{
-    font-style:normal;
-    font-size:10.5px;
-    font-family:-apple-system,"PingFang SC",sans-serif;
-    font-weight:400;
-    letter-spacing:.22em;
-    color:var(--gold);
-    margin-left:7px;
-    vertical-align:1px;
-  }
-  .sp-meta{
-    font-size:11px;
-    letter-spacing:.02em;
-    color:var(--ink-2);
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-
-  /* 图标网格 */
-  .sheet-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:2px;
-    padding:12px 0 16px;
-    border-bottom:1px solid rgba(0,0,0,.065);
-    margin-bottom:12px;
-  }
-  .sheet-item{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:8px;
-    padding:10px 2px;
-    background:none;
-    border:none;
-    font-family:inherit;
-    cursor:pointer;
-    border-radius:10px;
-    transition:transform .15s ease,background .15s ease;
-    -webkit-tap-highlight-color:transparent;
-  }
-  .sheet-item:active{
-    transform:scale(.93);
-    background:rgba(176,141,87,.07);
-  }
-  .sheet-ico{
-    width:50px;height:50px;
-    border-radius:14px;
-    display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(145deg,#cbab7a 0%,#a9854f 100%);
-    box-shadow:0 7px 15px -9px rgba(160,120,60,.95);
-  }
-  .sheet-ico svg{
-    width:24px;height:24px;
-    stroke:#fff;
-    fill:none;
-    stroke-width:1.8;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-  }
-  .sheet-label{
-    font-size:11.5px;
-    letter-spacing:.02em;
-    color:#5c5044;
-    white-space:nowrap;
-  }
-
-  /* 取消 */
-  .sheet-cancel{
-    display:block;
-    width:100%;
-    padding:14px;
-    font-family:inherit;
-    font-size:16px;
-    letter-spacing:.06em;
-    color:var(--ink);
-    background:#fff;
-    border:1px solid rgba(0,0,0,.07);
-    border-radius:11px;
-    cursor:pointer;
-    transition:background .15s ease,transform .15s ease;
-    -webkit-tap-highlight-color:transparent;
-  }
-  .sheet-cancel:active{
-    background:#f4efe6;
-    transform:scale(.985);
-  }
-
-  /* ============ Toast ============ */
+  /* ---------- Toast ---------- */
   .toast{
-    position:fixed;
-    left:50%;top:50%;
-    z-index:99;
-    transform:translate(-50%,-50%) scale(.9);
-    padding:12px 24px;
-    background:rgba(48,38,26,.9);
-    color:#fff;
-    font-size:13.5px;
-    letter-spacing:.08em;
-    border-radius:9px;
-    white-space:nowrap;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .26s ease,transform .26s ease;
+    position:fixed;left:50%;top:50%;z-index:99;
+    transform:translate(-50%,-50%) scale(.92);
+    background:rgba(70,58,46,.92);color:#fff;
+    font-size:13.5px;letter-spacing:.1em;
+    padding:12px 22px;border-radius:8px;
+    opacity:0;transition:opacity .25s ease,transform .25s ease;
+    pointer-events:none;white-space:nowrap;
   }
   .toast.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
-
-  /* ============ 入场动画 ============ */
-  @keyframes fadeUp{
-    from{opacity:0;transform:translateY(20px);}
-    to{opacity:1;transform:none;}
-  }
-  .fade{opacity:0;animation:fadeUp .8s cubic-bezier(.2,.7,.3,1) forwards;}
-  .f1{animation-delay:.06s;}
-  .f2{animation-delay:.2s;}
-  .f3{animation-delay:.36s;}
-
-  @media (max-width:360px){
-    .sheet-label{font-size:10.5px;}
-    .sheet-ico{width:46px;height:46px;border-radius:13px;}
-    .sheet-ico svg{width:22px;height:22px;}
-  }
 </style>
 </head>
 <body>
 
-<!-- ==================== 页头 ==================== -->
-<header class="page-head">
-  <p class="eyebrow fade f1">李建 &amp; 杨丽屏 · 婚礼邀请函</p>
-  <h1 class="page-title fade f2">微信分享面板</h1>
-  <p class="page-desc fade f3">点击下方按钮，预览分享到微信的效果</p>
-</header>
+<div class="petals" id="petals" aria-hidden="true"></div>
 
-<!-- ==================== 微信聊天模拟 ==================== -->
-<div class="wechat fade f3">
-  <div class="wx-bar">
-    <span class="wx-back">‹</span>
-    <span class="wx-bar-title">李建 &amp; 杨丽屏</span>
-    <span class="wx-more">···</span>
+<!-- ============ 封面 ============ -->
+<section class="cover">
+  <div class="frame" aria-hidden="true"></div>
+
+  <p class="eyebrow anim d1">Wedding Invitation</p>
+
+  <div class="names">
+    <span class="name anim d2">李建</span>
+    <span class="heart anim d3">♥</span>
+    <span class="name anim d4">杨丽屏</span>
   </div>
 
-  <div class="wx-chat">
-    <div class="wx-row">
-      <div class="wx-avatar">囍</div>
+  <div class="rule anim d5"></div>
+  <p class="date anim d5">2026 . 10 . 06</p>
+  <p class="place anim d6">湖北 · 赤壁 · 凯丰禧宴</p>
 
-      <!-- 链接卡片 -->
-      <div class="wx-bubble">
-        <div class="wx-thumb"><span>囍</span></div>
-        <div class="wx-info">
-          <p class="wx-info-title">李建 &amp; 杨丽屏 诚邀您参加婚礼</p>
-          <p class="wx-info-desc">2026年10月6日 12:00 · 赤壁凯丰禧宴</p>
-        </div>
-      </div>
+  <div class="scroll-hint anim d7">向 下 滑 动</div>
+</section>
+
+<!-- ============ 邀请函 ============ -->
+<section class="section">
+  <div class="card reveal">
+    <p class="sec-title">邀 请 函</p>
+    <p class="lead">谨 定 于</p>
+    <p class="big">2026年10月6日</p>
+    <p class="sub">（星期二）中午 12:00</p>
+    <div class="rule-sm"></div>
+    <p class="lead">在 湖北省赤壁市</p>
+    <p class="big">凯 丰 禧 宴</p>
+    <p class="lead">举 行 结 婚 典 礼</p>
+    <div class="rule-sm"></div>
+    <p class="lead">敬备喜筵 &nbsp;恭候光临</p>
+  </div>
+</section>
+
+<!-- ============ 婚礼信息 ============ -->
+<section class="section">
+  <p class="sec-title reveal">婚 礼 信 息</p>
+  <div class="info">
+    <div class="info-item reveal">
+      <div class="info-label">时 间</div>
+      <div class="info-main">2026年10月6日 星期二</div>
+      <div class="info-sub">中午 12:00 入席</div>
+    </div>
+
+    <div class="info-item reveal">
+      <div class="info-label">地 点</div>
+      <div class="info-main">湖北省赤壁市 · 凯丰禧宴</div>
+      <div class="info-sub">期待与您相见</div>
+    </div>
+
+    <div class="reveal">
+      <a class="btn"
+         href="https://uri.amap.com/search?keyword=%E5%87%AF%E4%B8%B0%E7%A6%9A%E5%AE%B4&city=%E8%B5%A4%E5%A3%81&view=map"
+         target="_blank" rel="noopener">一 键 导 航</a>
+      <button class="btn ghost" id="copyBtn" type="button">复 制 地 址</button>
     </div>
   </div>
-</div>
+</section>
 
-<!-- ==================== 触发按钮 ==================== -->
-<button class="share-btn fade f3" id="shareBtn" type="button">
-  <svg viewBox="0 0 24 24" aria-hidden="true">
-    <circle cx="18" cy="5" r="3"/>
-    <circle cx="6" cy="12" r="3"/>
-    <circle cx="18" cy="19" r="3"/>
-    <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>
-  </svg>
-  分享给朋友
-</button>
-
-<!-- ==================== 遮罩 ==================== -->
-<div class="sheet-mask" id="mask" aria-hidden="true"></div>
-
-<!-- ==================== 分享面板 ==================== -->
-<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="分享面板">
-  <div class="sheet-grip" aria-hidden="true"></div>
-
-  <!-- 面板顶部：请帖预览 -->
-  <div class="sheet-preview">
-    <div class="sp-thumb">囍</div>
-    <div class="sp-info">
-      <p class="sp-name">李建 &amp; 杨丽屏<em>婚礼邀请函</em></p>
-      <p class="sp-meta">2026.10.06 12:00 · 赤壁凯丰禧宴</p>
-    </div>
+<!-- ============ 倒计时 ============ -->
+<section class="section">
+  <p class="sec-title reveal">婚 礼 倒 计 时</p>
+  <div class="countdown reveal" id="countdown">
+    <div class="cd-item"><div class="cd-num" id="cd-d">--</div><div class="cd-label">天</div></div>
+    <div class="cd-item"><div class="cd-num" id="cd-h">--</div><div class="cd-label">时</div></div>
+    <div class="cd-item"><div class="cd-num" id="cd-m">--</div><div class="cd-label">分</div></div>
+    <div class="cd-item"><div class="cd-num" id="cd-s">--</div><div class="cd-label">秒</div></div>
   </div>
+</section>
 
-  <!-- 分享方式 -->
-  <div class="sheet-grid">
-    <button class="sheet-item" type="button" data-toast="已发送给朋友">
-      <span class="sheet-ico">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5z"/>
-        </svg>
-      </span>
-      <span class="sheet-label">发送给朋友</span>
-    </button>
-
-    <button class="sheet-item" type="button" data-toast="已分享到朋友圈">
-      <span class="sheet-ico">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="9"/>
-          <circle cx="12" cy="12" r="3.4"/>
-        </svg>
-      </span>
-      <span class="sheet-label">分享到朋友圈</span>
-    </button>
-
-    <button class="sheet-item" type="button" data-toast="链接已复制">
-      <span class="sheet-ico">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-        </svg>
-      </span>
-      <span class="sheet-label">复制链接</span>
-    </button>
-
-    <button class="sheet-item" type="button" data-toast="海报生成中…">
-      <span class="sheet-ico">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <rect x="3" y="3" width="18" height="18" rx="2.5"/>
-          <circle cx="8.6" cy="8.6" r="1.5"/>
-          <path d="M21 15.5l-4.5-4.5L6 21"/>
-        </svg>
-      </span>
-      <span class="sheet-label">生成海报</span>
-    </button>
-  </div>
-
-  <button class="sheet-cancel" id="cancelBtn" type="button">取消</button>
-</div>
+<!-- ============ 结尾 ============ -->
+<section class="finale">
+  <p class="finale-text reveal">我们的故事，因您而完整</p>
+  <p class="finale-text reveal">诚邀您见证这一刻的幸福</p>
+  <div class="rule reveal" style="margin:30px auto 0;"></div>
+  <p class="finale-name reveal">李建 &amp; 杨丽屏</p>
+  <p class="finale-sub reveal">敬 邀</p>
+  <p class="finale-tip reveal">请将出席情况告知我们<br>期待与您共赴这场喜悦</p>
+</section>
 
 <script>
 (function () {
-  var mask     = document.getElementById('mask');
-  var sheet    = document.getElementById('sheet');
-  var shareBtn = document.getElementById('shareBtn');
-  var cancelBtn= document.getElementById('cancelBtn');
-
-  /* ---------- 打开 / 关闭 ---------- */
-  function openSheet() {
-    mask.classList.add('open');
-    sheet.classList.add('open');
-    document.body.classList.add('locked');
-  }
-  function closeSheet() {
-    mask.classList.remove('open');
-    sheet.classList.remove('open');
-    document.body.classList.remove('locked');
+  /* ---------- 花瓣 ---------- */
+  var layer = document.getElementById('petals');
+  var count = window.innerWidth < 500 ? 12 : 20;
+  for (var i = 0; i < count; i++) {
+    var p = document.createElement('i');
+    p.className = 'petal';
+    var size = 6 + Math.random() * 8;
+    p.style.left = (Math.random() * 100) + 'vw';
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.animationDuration = (9 + Math.random() * 8) + 's';
+    p.style.animationDelay = (Math.random() * 14) + 's';
+    layer.appendChild(p);
   }
 
-  shareBtn.addEventListener('click', openSheet);
-  cancelBtn.addEventListener('click', closeSheet);
-  mask.addEventListener('click', closeSheet);
+  /* ---------- 滚动淡入 ---------- */
+  var reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  }
 
-  /* 桌面端按 Esc 关闭 */
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeSheet();
-  });
+  /* ---------- 倒计时 ---------- */
+  var target = new Date('2026-10-06T12:00:00+08:00').getTime();
+  var elD = document.getElementById('cd-d'),
+      elH = document.getElementById('cd-h'),
+      elM = document.getElementById('cd-m'),
+      elS = document.getElementById('cd-s');
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function tick() {
+    var diff = target - Date.now();
+    if (diff < 0) diff = 0;
+    elD.textContent = pad(Math.floor(diff / 86400000));
+    elH.textContent = pad(Math.floor(diff % 86400000 / 3600000));
+    elM.textContent = pad(Math.floor(diff % 3600000 / 60000));
+    elS.textContent = pad(Math.floor(diff % 60000 / 1000));
+  }
+  tick();
+  setInterval(tick, 1000);
 
   /* ---------- Toast ---------- */
-  var toastEl = null;
-  var toastTimer = null;
-
   function toast(msg) {
-    if (!toastEl) {
-      toastEl = document.createElement('div');
-      toastEl.className = 'toast';
-      document.body.appendChild(toastEl);
-    }
-    toastEl.textContent = msg;
-    requestAnimationFrame(function () {
-      toastEl.classList.add('show');
-    });
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () {
-      toastEl.classList.remove('show');
-    }, 1500);
+    var t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add('show'); });
+    setTimeout(function () {
+      t.classList.remove('show');
+      setTimeout(function () { t.remove(); }, 300);
+    }, 1600);
   }
 
-  /* ---------- 分享项点击 ---------- */
-  var items = document.querySelectorAll('.sheet-item');
-  Array.prototype.forEach.call(items, function (btn) {
-    btn.addEventListener('click', function () {
-      var msg = btn.getAttribute('data-toast') || '已分享';
-      toast(msg);
-
-      /* 复制链接：真实写入剪贴板 */
-      if (msg === '链接已复制') {
-        var url = location.href;
-        if (navigator.clipboard && window.isSecureContext) {
-          navigator.clipboard.writeText(url).catch(function () {});
-        } else {
-          var ta = document.createElement('textarea');
-          ta.value = url;
-          ta.style.cssText = 'position:fixed;top:-9999px;opacity:0;';
-          document.body.appendChild(ta);
-          ta.select();
-          try { document.execCommand('copy'); } catch (e) {}
-          ta.remove();
-        }
-      }
-
-      if (msg !== '海报生成中…') {
-        setTimeout(closeSheet, 420);
-      }
-    });
+  /* ---------- 复制地址 ---------- */
+  var ADDR = '湖北省赤壁市凯丰禧宴';
+  document.getElementById('copyBtn').addEventListener('click', function () {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(ADDR).then(function () {
+        toast('地址已复制');
+      }).catch(function () { fallback(); });
+    } else {
+      fallback();
+    }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = ADDR;
+      ta.style.cssText = 'position:fixed;top:-999px;opacity:0;';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); toast('地址已复制'); }
+      catch (e) { toast(ADDR); }
+      ta.remove();
+    }
   });
 })();
 </script>
