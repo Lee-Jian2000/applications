@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#f4efe6">
+
+<!-- ========== 微信分享卡片信息（关键） ========== -->
+<title>李建 &amp; 杨丽屏 诚邀您参加婚礼</title>
+<meta name="description" content="2026年10月6日 12:00 · 赤壁凯丰禧宴，诚邀您共同见证幸福时刻。">
+<meta property="og:title" content="李建 &amp; 杨丽屏 诚邀您参加婚礼">
+<meta property="og:description" content="2026年10月6日 12:00 · 赤壁凯丰禧宴">
+<meta property="og:type" content="website">
+
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+  :root{
+    --gold:#b08d57;
+    --gold-d:#8f6f42;
+    --ink:#3d3228;
+    --ink-2:#8a7a6a;
+    --red:#a8322d;
+    --red-l:#c0453c;
+  }
+
+  html{-webkit-text-size-adjust:100%;}
+
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 12% 6%, #fdf7ea 0%, rgba(253,247,234,0) 46%),
+      radial-gradient(circle at 90% 94%, #f7ece0 0%, rgba(247,236,224,0) 50%),
+      #f4efe6;
+    background-attachment:fixed;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:34px 16px 60px;
+    -webkit-font-smoothing:antialiased;
+    -webkit-tap-highlight-color:transparent;
+    overflow-x:hidden;
+  }
+  body.locked{overflow:hidden;}
+
+  /* ============ 页头 ============ */
+  .page-head{text-align:center;margin-bottom:22px;max-width:400px;}
+
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.3em;
+    text-indent:.3em;
+    color:var(--gold);
+    margin-bottom:9px;
+    font-weight:500;
+  }
+  .page-title{
+    font-family:"Songti SC","STSong","Noto Serif SC",serif;
+    font-size:21px;
+    font-weight:600;
+    letter-spacing:.16em;
+    text-indent:.16em;
+    color:var(--ink);
+    margin-bottom:8px;
+  }
+  .page-desc{font-size:12px;letter-spacing:.08em;color:var(--ink-2);}
+
+  /* ============ 微信聊天模拟 ============ */
+  .wechat{
+    width:100%;
+    max-width:400px;
+    background:#ededed;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:
+      0 26px 54px -30px rgba(90,66,34,.55),
+      0 0 0 1px rgba(0,0,0,.04);
+    margin-bottom:22px;
+  }
+
+  .wx-bar{
+    position:relative;
+    display:flex;
+    align-items:center;
+    height:46px;
+    padding:0 13px;
+    background:#ededed;
+    border-bottom:1px solid rgba(0,0,0,.06);
+  }
+  .wx-back{font-size:26px;line-height:1;color:#1a1a1a;transform:translateY(-2px);}
+  .wx-bar-title{
+    position:absolute;left:50%;transform:translateX(-50%);
+    font-size:16px;font-weight:600;color:#1a1a1a;
+    letter-spacing:.02em;white-space:nowrap;
+    max-width:60%;overflow:hidden;text-overflow:ellipsis;
+  }
+  .wx-more{margin-left:auto;font-size:15px;letter-spacing:1.5px;color:#1a1a1a;line-height:1;}
+
+  .wx-chat{
+    padding:18px 13px 24px;
+    min-height:176px;
+    display:flex;flex-direction:column;gap:16px;
+  }
+
+  .wx-row{display:flex;gap:9px;align-items:flex-start;}
+
+  .wx-avatar{
+    width:38px;height:38px;flex:0 0 38px;
+    border-radius:5px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Songti SC","STSong",serif;
+    font-size:19px;color:#f2dbaa;
+    background:linear-gradient(150deg,var(--red-l),#93261f);
+    box-shadow:0 3px 8px -4px rgba(150,40,35,.75);
+  }
+
+  /* 链接卡片 —— 点击跳转 GitHub 请帖 */
+  .wx-bubble{
+    position:relative;
+    display:flex;
+    max-width:290px;
+    background:#fff;
+    border-radius:5px;
+    overflow:hidden;
+    box-shadow:0 1px 3px rgba(0,0,0,.09);
+    text-decoration:none;
+    color:inherit;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .16s ease;
+  }
+  .wx-bubble:active{transform:scale(.98);}
+  .wx-bubble::before{
+    content:"";position:absolute;left:-5px;top:14px;
+    width:0;height:0;
+    border-top:5px solid transparent;
+    border-bottom:5px solid transparent;
+    border-right:5px solid #fff;
+  }
+
+  .wx-thumb{
+    width:78px;height:78px;flex:0 0 78px;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+    background:linear-gradient(150deg,var(--red-l) 0%,#93261f 100%);
+  }
+  .wx-thumb::before{
+    content:"";position:absolute;inset:7px;
+    border:1px solid rgba(242,219,170,.55);border-radius:2px;
+  }
+  .wx-thumb span{
+    font-family:"Songti SC","STSong",serif;
+    font-size:34px;line-height:1;color:#f2dbaa;
+    position:relative;z-index:1;transform:translateY(-1px);
+  }
+
+  .wx-info{
+    flex:1;min-width:0;padding:10px 12px;
+    display:flex;flex-direction:column;justify-content:center;gap:5px;
+  }
+  .wx-info-title{
+    font-size:15px;font-weight:600;line-height:1.35;color:#1a1a1a;
+    letter-spacing:.01em;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .wx-info-desc{
+    font-size:11.5px;line-height:1.4;color:#9a9a9a;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+
+  /* ============ 打开请帖按钮 ============ */
+  .open-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    padding:15px 38px;margin-bottom:14px;
+    font-family:inherit;font-size:15px;font-weight:500;
+    letter-spacing:.16em;text-indent:.16em;
+    color:#fff;text-decoration:none;
+    border-radius:999px;
+    background:linear-gradient(135deg,#c9aa77 0%,#a9854f 100%);
+    box-shadow:0 16px 32px -18px rgba(160,120,60,.95);
+    transition:transform .18s ease,box-shadow .18s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .open-btn:active{transform:scale(.97);box-shadow:0 8px 18px -16px rgba(160,120,60,.9);}
+  .open-btn svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+  /* ============ 分享触发按钮 ============ */
+  .share-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    padding:14px 34px;
+    font-family:inherit;font-size:14px;font-weight:500;
+    letter-spacing:.14em;text-indent:.14em;
+    color:var(--gold-d);background:transparent;
+    border:1px solid rgba(176,141,87,.55);
+    border-radius:999px;cursor:pointer;
+    transition:transform .18s ease,background .18s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .share-btn:active{transform:scale(.97);background:rgba(176,141,87,.08);}
+  .share-btn svg{width:18px;height:18px;stroke:var(--gold-d);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+
+  /* ============ 遮罩 ============ */
+  .sheet-mask{
+    position:fixed;inset:0;z-index:50;
+    background:rgba(30,20,10,.45);
+    opacity:0;visibility:hidden;
+    transition:opacity .32s ease,visibility .32s ease;
+  }
+  .sheet-mask.open{opacity:1;visibility:visible;}
+
+  /* ============ 分享面板 ============ */
+  .sheet{
+    position:fixed;left:0;right:0;bottom:0;z-index:60;
+    width:100%;max-width:480px;margin:0 auto;
+    padding:0 16px calc(16px + env(safe-area-inset-bottom));
+    background:#fbf7f0;
+    border-radius:18px 18px 0 0;
+    box-shadow:0 -10px 44px -14px rgba(80,58,28,.3);
+    transform:translateY(105%);
+    transition:transform .42s cubic-bezier(.32,.72,.35,1);
+    will-change:transform;
+  }
+  .sheet.open{transform:translateY(0);}
+
+  .sheet-grip{
+    width:40px;height:4px;border-radius:2px;
+    background:rgba(176,141,87,.32);
+    margin:11px auto 2px;
+  }
+
+  /* 面板顶部预览 —— 可点击跳转 */
+  .sheet-preview{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 14px;margin:13px 0 6px;
+    border-radius:11px;
+    background:linear-gradient(135deg,#fffdf8 0%,#f7edda 100%);
+    border:1px solid rgba(176,141,87,.28);
+    text-decoration:none;color:inherit;
+    transition:transform .15s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .sheet-preview:active{transform:scale(.985);}
+  .sp-thumb{
+    width:52px;height:52px;flex:0 0 52px;
+    border-radius:7px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Songti SC","STSong",serif;
+    font-size:25px;color:#f2dbaa;
+    background:linear-gradient(150deg,var(--red-l),#93261f);
+    box-shadow:0 6px 14px -8px rgba(150,40,35,.8);
+    position:relative;
+  }
+  .sp-thumb::before{content:"";position:absolute;inset:5px;border:1px solid rgba(242,219,170,.5);border-radius:3px;}
+  .sp-info{flex:1;min-width:0;}
+  .sp-name{
+    font-family:"Songti SC","STSong",serif;
+    font-size:15.5px;font-weight:600;letter-spacing:.05em;
+    color:var(--ink);margin-bottom:4px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .sp-name em{
+    font-style:normal;font-size:10.5px;
+    font-family:-apple-system,"PingFang SC",sans-serif;
+    font-weight:400;letter-spacing:.22em;color:var(--gold);
+    margin-left:7px;vertical-align:1px;
+  }
+  .sp-meta{
+    font-size:11px;letter-spacing:.02em;color:var(--ink-2);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+
+  /* 图标网格 */
+  .sheet-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:2px;padding:12px 0 16px;
+    border-bottom:1px solid rgba(0,0,0,.065);
+    margin-bottom:12px;
+  }
+  .sheet-item{
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    padding:10px 2px;background:none;border:none;
+    font-family:inherit;cursor:pointer;border-radius:10px;
+    transition:transform .15s ease,background .15s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .sheet-item:active{transform:scale(.93);background:rgba(176,141,87,.07);}
+  .sheet-ico{
+    width:50px;height:50px;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(145deg,#cbab7a 0%,#a9854f 100%);
+    box-shadow:0 7px 15px -9px rgba(160,120,60,.95);
+  }
+  .sheet-ico svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .sheet-label{font-size:11.5px;letter-spacing:.02em;color:#5c5044;white-space:nowrap;}
+
+  .sheet-cancel{
+    display:block;width:100%;padding:14px;
+    font-family:inherit;font-size:16px;letter-spacing:.06em;
+    color:var(--ink);background:#fff;
+    border:1px solid rgba(0,0,0,.07);border-radius:11px;
+    cursor:pointer;transition:background .15s ease,transform .15s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .sheet-cancel:active{background:#f4efe6;transform:scale(.985);}
+
+  /* ============ Toast ============ */
+  .toast{
+    position:fixed;left:50%;top:50%;z-index:99;
+    transform:translate(-50%,-50%) scale(.9);
+    padding:12px 24px;
+    background:rgba(48,38,26,.9);color:#fff;
+    font-size:13.5px;letter-spacing:.08em;
+    border-radius:9px;white-space:nowrap;
+    opacity:0;pointer-events:none;
+    transition:opacity .26s ease,transform .26s ease;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+
+  /* ============ 入场动画 ============ */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+  .fade{opacity:0;animation:fadeUp .8s cubic-bezier(.2,.7,.3,1) forwards;}
+  .f1{animation-delay:.06s;} .f2{animation-delay:.2s;} .f3{animation-delay:.36s;}
+
+  @media (max-width:360px){
+    .sheet-label{font-size:10.5px;}
+    .sheet-ico{width:46px;height:46px;border-radius:13px;}
+    .sheet-ico svg{width:22px;height:22px;}
+    .open-btn,.share-btn{padding-left:28px;padding-right:28px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== 页头 ==================== -->
+<header class="page-head">
+  <p class="eyebrow fade f1">李建 &amp; 杨丽屏 · 婚礼邀请函</p>
+  <h1 class="page-title fade f2">微信分享面板</h1>
+  <p class="page-desc fade f3">点击下方按钮，预览分享到微信的效果</p>
+</header>
+
+<!-- ==================== 微信聊天模拟 ==================== -->
+<div class="wechat fade f3">
+  <div class="wx-bar">
+    <span class="wx-back">‹</span>
+    <span class="wx-bar-title">李建 &amp; 杨丽屏</span>
+    <span class="wx-more">···</span>
+  </div>
+
+  <div class="wx-chat">
+    <div class="wx-row">
+      <div class="wx-avatar">囍</div>
+
+      <!-- 链接卡片：点击直接打开 GitHub 请帖 -->
+      <a class="wx-bubble" href="https://YOUR-USERNAME.github.io/YOUR-REPO/" target="_blank" rel="noopener">
+        <div class="wx-thumb"><span>囍</span></div>
+        <div class="wx-info">
+          <p class="wx-info-title">李建 &amp; 杨丽屏 诚邀您参加婚礼</p>
+          <p class="wx-info-desc">2026年10月6日 12:00 · 赤壁凯丰禧宴</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 打开请帖 ==================== -->
+<a class="open-btn fade f3" href="https://lee-jian2000.github.io/applications/wedding.html" target="_blank" rel="noopener">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+    <path d="M15 3h6v6"/>
+    <path d="M10 14L21 3"/>
+  </svg>
+  打开婚礼请帖
+</a>
+
+<!-- ==================== 分享按钮 ==================== -->
+<button class="share-btn fade f3" id="shareBtn" type="button">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="18" cy="5" r="3"/>
+    <circle cx="6" cy="12" r="3"/>
+    <circle cx="18" cy="19" r="3"/>
+    <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>
+  </svg>
+  分享给朋友
+</button>
+
+<!-- ==================== 遮罩 ==================== -->
+<div class="sheet-mask" id="mask" aria-hidden="true"></div>
+
+<!-- ==================== 分享面板 ==================== -->
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="分享面板">
+  <div class="sheet-grip" aria-hidden="true"></div>
+
+  <!-- 面板顶部预览：点击直接打开请帖 -->
+  <a class="sheet-preview" href="https://YOUR-USERNAME.github.io/YOUR-REPO/" target="_blank" rel="noopener">
+    <div class="sp-thumb">囍</div>
+    <div class="sp-info">
+      <p class="sp-name">李建 &amp; 杨丽屏<em>婚礼邀请函</em></p>
+      <p class="sp-meta">2026.10.06 12:00 · 赤壁凯丰禧宴</p>
+    </div>
+  </a>
+
+  <!-- 分享方式 -->
+  <div class="sheet-grid">
+    <button class="sheet-item" type="button" data-toast="已发送给朋友">
+      <span class="sheet-ico">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5z"/>
+        </svg>
+      </span>
+      <span class="sheet-label">发送给朋友</span>
+    </button>
+
+    <button class="sheet-item" type="button" data-toast="已分享到朋友圈">
+      <span class="sheet-ico">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"/>
+          <circle cx="12" cy="12" r="3.4"/>
+        </svg>
+      </span>
+      <span class="sheet-label">分享到朋友圈</span>
+    </button>
+
+    <button class="sheet-item" type="button" data-toast="请帖链接已复制">
+      <span class="sheet-ico">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        </svg>
+      </span>
+      <span class="sheet-label">复制请帖链接</span>
+    </button>
+
+    <button class="sheet-item" type="button" data-toast="已打开请帖">
+      <span class="sheet-ico">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          <path d="M15 3h6v6"/>
+          <path d="M10 14L21 3"/>
+        </svg>
+      </span>
+      <span class="sheet-label">打开请帖</span>
+    </button>
+  </div>
+
+  <button class="sheet-cancel" id="cancelBtn" type="button">取消</button>
+</div>
+
+<script>
+(function () {
+  /* ★★★ 请把下面这行改成你自己真实的 GitHub Pages 请帖地址 ★★★ */
+  var INVITE_URL = 'https://YOUR-USERNAME.github.io/YOUR-REPO/';
+
+  /* 自动把页面上所有 data-invite 链接同步为该地址 */
+  var links = document.querySelectorAll('[data-invite]');
+  Array.prototype.forEach.call(links, function (a) {
+    a.setAttribute('href', INVITE_URL);
+  });
+
+  var mask     = document.getElementById('mask');
+  var sheet    = document.getElementById('sheet');
+  var shareBtn = document.getElementById('shareBtn');
+  var cancelBtn= document.getElementById('cancelBtn');
+
+  /* ---------- 打开 / 关闭 ---------- */
+  function openSheet() {
+    mask.classList.add('open');
+    sheet.classList.add('open');
+    document.body.classList.add('locked');
+  }
+  function closeSheet() {
+    mask.classList.remove('open');
+    sheet.classList.remove('open');
+    document.body.classList.remove('locked');
+  }
+
+  shareBtn.addEventListener('click', openSheet);
+  cancelBtn.addEventListener('click', closeSheet);
+  mask.addEventListener('click', closeSheet);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeSheet();
+  });
+
+  /* ---------- Toast ---------- */
+  var toastEl = null, toastTimer = null;
+  function toast(msg) {
+    if (!toastEl) {
+      toastEl = document.createElement('div');
+      toastEl.className = 'toast';
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = msg;
+    requestAnimationFrame(function () { toastEl.classList.add('show'); });
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 1500);
+  }
+
+  /* ---------- 分享项点击 ---------- */
+  var items = document.querySelectorAll('.sheet-item');
+  Array.prototype.forEach.call(items, function (btn) {
+    btn.addEventListener('click', function () {
+      var msg = btn.getAttribute('data-toast') || '已分享';
+
+      /* 打开请帖：直接跳转 */
+      if (msg === '已打开请帖') {
+        window.open(INVITE_URL, '_blank');
+        toast(msg);
+        setTimeout(closeSheet, 420);
+        return;
+      }
+
+      /* 复制请帖链接：写入剪贴板 */
+      if (msg === '请帖链接已复制') {
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(INVITE_URL).catch(function () {});
+        } else {
+          var ta = document.createElement('textarea');
+          ta.value = INVITE_URL;
+          ta.style.cssText = 'position:fixed;top:-9999px;opacity:0;';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); } catch (e) {}
+          ta.remove();
+        }
+      }
+
+      toast(msg);
+      setTimeout(closeSheet, 420);
+    });
+  });
+})();
+</script>
+</body>
+</html>
