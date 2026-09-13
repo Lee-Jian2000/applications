@@ -5,10 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="format-detection" content="telephone=no">
 <meta name="theme-color" content="#fdfaf5">
-<title>李建 &amp; 杨丽屏 · 婚礼邀请函</title>
-<meta name="description" content="2026年10月6日 12:00 · 湖北省赤壁市凯丰禧宴，诚邀您共同见证我们的幸福时刻。">
-<meta property="og:title" content="李建 &amp; 杨丽屏 · 婚礼邀请函">
-<meta property="og:description" content="2026年10月6日 12:00 · 湖北省赤壁市凯丰禧宴">
+
+<!-- ========== 微信分享卡片信息（改这里） ========== -->
+<title>李建 &amp; 杨丽屏 诚邀您参加婚礼</title>
+<meta name="description" content="2026年10月6日 12:00 · 赤壁凯丰禧宴，诚邀您共同见证幸福时刻。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="李建 &amp; 杨丽屏 诚邀您参加婚礼">
+<meta property="og:description" content="2026年10月6日 12:00 · 赤壁凯丰禧宴">
+<meta property="og:image" content="https://YOUR-USERNAME.github.io/YOUR-REPO/share-cover.jpg">
+<meta property="og:image:width" content="500">
+<meta property="og:image:height" content="500">
+<meta property="og:url" content="https://YOUR-USERNAME.github.io/YOUR-REPO/">
+
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   :root{
@@ -91,7 +99,6 @@
   }
   @keyframes bob{0%,100%{transform:translate(-50%,0);}50%{transform:translate(-50%,7px);}}
 
-  /* 封面入场动画 */
   .anim{opacity:0;animation:fadeUp .95s cubic-bezier(.2,.7,.3,1) forwards;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:none;}}
   .d1{animation-delay:.15s;} .d2{animation-delay:.4s;} .d3{animation-delay:.6s;}
@@ -197,6 +204,9 @@
 </head>
 <body>
 
+<!-- ========== 微信缩略图抓取用（放在 body 最前面，不会显示） ========== -->
+<img src="https://YOUR-USERNAME.github.io/YOUR-REPO/share-cover.jpg" alt="" style="position:absolute;left:-9999px;top:-9999px;width:300px;height:300px;">
+
 <div class="petals" id="petals" aria-hidden="true"></div>
 
 <!-- ============ 封面 ============ -->
@@ -251,6 +261,7 @@
     </div>
 
     <div class="reveal">
+      <!-- 导航链接已修正“禧”字编码 -->
       <a class="btn"
          href="https://uri.amap.com/search?keyword=%E5%87%AF%E4%B8%B0%E7%A6%A7%E5%AE%B4&city=%E8%B5%A4%E5%A3%81&view=map"
          target="_blank" rel="noopener">一 键 导 航</a>
