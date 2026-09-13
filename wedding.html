@@ -6,20 +6,21 @@
 <meta name="format-detection" content="telephone=no">
 <meta name="theme-color" content="#fdfaf5">
 
-<!-- ========== 微信分享卡片信息（改这里） ========== -->
+<!-- ============================================================ -->
+<!-- 微信分享卡片信息：只需把 YOUR-USERNAME / YOUR-REPO 换成你的 -->
+<!-- ============================================================ -->
 <title>李建 &amp; 杨丽屏 诚邀您参加婚礼</title>
 <meta name="description" content="2026年10月6日 12:00 · 赤壁凯丰禧宴，诚邀您共同见证幸福时刻。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="李建 &amp; 杨丽屏 诚邀您参加婚礼">
 <meta property="og:description" content="2026年10月6日 12:00 · 赤壁凯丰禧宴">
-<meta property="og:image" content="https://lee-jian2000.github.io/applications/share.cover.jpg">
+<meta property="og:image" content="https://lee-jian2000.github.io/applications/share.cover.jpg?v=2">
 <meta property="og:image:width" content="500">
 <meta property="og:image:height" content="500">
 <meta property="og:url" content="https://lee-jian2000.github.io/applications/wedding.html">
-<!-- 补充微信专用标签，提高抓取成功率 -->
 <meta name="wx.share.title" content="李建 &amp; 杨丽屏 诚邀您参加婚礼">
 <meta name="wx.share.desc" content="2026年10月6日 12:00 · 赤壁凯丰禧宴">
-<meta name="wx.share.img" content="https://lee-jian2000.github.io/applications/share.cover.jpg">
+<meta name="wx.share.img" content="https://lee-jian2000.github.io/applications/share.cover.jpg?v=2">
 
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -214,7 +215,7 @@
 <body>
 
 <!-- 微信缩略图抓取用（放在 body 最前面，不会显示） -->
-<img src="https://lee-jian2000.github.io/applications/share.cover.jpg" alt="" style="position:absolute;left:-9999px;top:-9999px;width:300px;height:300px;">
+<img src="https://lee-jian2000.github.io/applications/share.cover.jpg?v=2" alt="" style="position:absolute;left:-9999px;top:-9999px;width:300px;height:300px;">
 
 <div class="petals" id="petals" aria-hidden="true"></div>
 
@@ -269,20 +270,17 @@
       <div class="info-sub">期待与您相见</div>
     </div>
 
-    <!-- 导航按钮组：双地图 + 复制地址兜底 -->
+    <!-- 导航按钮组：高德地图 + 复制地址兜底 -->
     <div class="nav-group reveal">
-      <!-- 高德地图：去掉了 city 限制，直接用全称搜索，避免找不到 -->
       <a class="btn"
          href="https://uri.amap.com/search?keyword=%E6%B9%96%E5%8C%97%E7%9C%81%E8%B5%A4%E5%A3%81%E5%B8%82%E5%87%AF%E4%B8%B0%E7%A6%A7%E5%AE%B4"
          target="_blank" rel="noopener">高德地图导航</a>
+      
+      <button class="btn ghost" id="copyBtn" type="button">复制地址（推荐）</button>
 
-     <!-- 腾讯地图：增加了 region 参数，限定在赤壁市搜索，解决“请选择检索方式”报错 -->
-<a class="btn" style="background:linear-gradient(135deg,#5b9dd9,#3b7cbd); box-shadow:0 12px 24px -14px rgba(59,124,189,.95);"
-   href=" "
-   target="_blank" rel="noopener">腾讯地图导航（推荐）</a >
-     
-      <!-- 兜底方案：复制地址，自己粘贴去地图App搜 -->
-      <button class="btn ghost" id="copyBtn" type="button">复制详细地址</button>
+      <p style="font-size:12px; color:var(--ink-2); margin-top:8px; line-height:1.6;">
+        微信内如无法直接跳转，请点击上方“复制地址”<br>然后打开手机上的高德/腾讯地图App粘贴搜索
+      </p>
     </div>
   </div>
 </section>
@@ -379,7 +377,7 @@
   document.getElementById('copyBtn').addEventListener('click', function () {
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(ADDR).then(function () {
-        toast('地址已复制');
+        toast('地址已复制，请打开地图App粘贴');
       }).catch(function () { fallback(); });
     } else {
       fallback();
@@ -390,7 +388,7 @@
       ta.style.cssText = 'position:fixed;top:-999px;opacity:0;';
       document.body.appendChild(ta);
       ta.select();
-      try { document.execCommand('copy'); toast('地址已复制'); }
+      try { document.execCommand('copy'); toast('地址已复制，请打开地图App粘贴'); }
       catch (e) { toast(ADDR); }
       ta.remove();
     }
