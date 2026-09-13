@@ -12,10 +12,14 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="李建 &amp; 杨丽屏 诚邀您参加婚礼">
 <meta property="og:description" content="2026年10月6日 12:00 · 赤壁凯丰禧宴">
-<meta property="og:image" content="https://lee-jian2000.github.io/applications/raw/main/share.cover.jpg">
+<meta property="og:image" content="https://lee-jian2000.github.io/applications/share.cover.jpg">
 <meta property="og:image:width" content="500">
 <meta property="og:image:height" content="500">
 <meta property="og:url" content="https://lee-jian2000.github.io/applications/wedding.html">
+<!-- 补充微信专用标签，提高抓取成功率 -->
+<meta name="wx.share.title" content="李建 &amp; 杨丽屏 诚邀您参加婚礼">
+<meta name="wx.share.desc" content="2026年10月6日 12:00 · 赤壁凯丰禧宴">
+<meta name="wx.share.img" content="https://lee-jian2000.github.io/applications/share.cover.jpg">
 
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -153,9 +157,8 @@
   .btn.ghost{
     background:transparent;color:var(--gold);
     border:1px solid rgba(176,141,87,.5);
-    box-shadow:none;margin-left:8px;
+    box-shadow:none;
   }
-  @media (max-width:360px){ .btn.ghost{margin-left:0;} }
 
   /* ---------- 倒计时 ---------- */
   .countdown{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;}
@@ -189,6 +192,12 @@
   }
   .reveal.in{opacity:1;transform:none;}
 
+  /* ---------- 导航按钮组 ---------- */
+  .nav-group{
+    display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:16px;
+  }
+  .nav-group .btn{ margin-top:0; width:100%; max-width:260px; }
+
   /* ---------- Toast ---------- */
   .toast{
     position:fixed;left:50%;top:50%;z-index:99;
@@ -204,8 +213,8 @@
 </head>
 <body>
 
-<!-- ========== 微信缩略图抓取用（放在 body 最前面，不会显示） ========== -->
-<img src="https://lee-jian2000.github.io/applications/raw/main/share.cover.jpg" alt="" style="position:absolute;left:-9999px;top:-9999px;width:300px;height:300px;">
+<!-- 微信缩略图抓取用（放在 body 最前面，不会显示） -->
+<img src="https://lee-jian2000.github.io/applications/share.cover.jpg" alt="" style="position:absolute;left:-9999px;top:-9999px;width:300px;height:300px;">
 
 <div class="petals" id="petals" aria-hidden="true"></div>
 
@@ -260,12 +269,20 @@
       <div class="info-sub">期待与您相见</div>
     </div>
 
-    <div class="reveal">
-      <!-- 导航链接已修正“禧”字编码 -->
+    <!-- 导航按钮组：双地图 + 复制地址兜底 -->
+    <div class="nav-group reveal">
+      <!-- 高德地图：去掉了 city 限制，直接用全称搜索，避免找不到 -->
       <a class="btn"
-         href="https://uri.amap.com/search?keyword=%E5%87%AF%E4%B8%B0%E7%A6%A7%E5%AE%B4&city=%E8%B5%A4%E5%A3%81&view=map"
-         target="_blank" rel="noopener">一 键 导 航</a>
-      <button class="btn ghost" id="copyBtn" type="button">复 制 地 址</button>
+         href="https://uri.amap.com/search?keyword=%E6%B9%96%E5%8C%97%E7%9C%81%E8%B5%A4%E5%A3%81%E5%B8%82%E5%87%AF%E4%B8%B0%E7%A6%A7%E5%AE%B4"
+         target="_blank" rel="noopener">高德地图导航</a>
+      
+      <!-- 腾讯地图：微信生态，在微信内打开极度流畅，无需刷新 -->
+      <a class="btn" style="background:linear-gradient(135deg,#5b9dd9,#3b7cbd); box-shadow:0 12px 24px -14px rgba(59,124,189,.95);"
+         href="https://apis.map.qq.com/uri/v1/search?keyword=%E6%B9%96%E5%8C%97%E7%9C%81%E8%B5%A4%E5%A3%81%E5%B8%82%E5%87%AF%E4%B8%B0%E7%A6%A7%E5%AE%B4"
+         target="_blank" rel="noopener">腾讯地图导航（推荐）</a>
+      
+      <!-- 兜底方案：复制地址，自己粘贴去地图App搜 -->
+      <button class="btn ghost" id="copyBtn" type="button">复制详细地址</button>
     </div>
   </div>
 </section>
