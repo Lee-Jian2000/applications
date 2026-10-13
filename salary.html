@@ -87,7 +87,7 @@ body {
 .btn {
     flex: 1; padding: 11px; border: none; border-radius: 8px;
     font-size: 14px; font-weight: bold; cursor: pointer;
-    transition: opacity 0.2s; color: white;
+    transition: opacity 0.2s, background 0.3s; color: white;
 }
 .btn:hover { opacity: 0.88; }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -206,7 +206,8 @@ body {
 
         <div class="action-buttons">
             <button class="btn btn-slack" id="slackBtn" onclick="toggleSlack()">🐟 开始摸鱼</button>
-            <button class="btn btn-end" id="endBtn" onclick="endDay()">🛑 今日结束</button>
+            <!-- 按钮文字改为“下班” -->
+            <button class="btn btn-end" id="endBtn" onclick="endDay()">🚪 下班</button>
         </div>
     </div>
 
@@ -238,17 +239,17 @@ const DEFAULT_SETTINGS = {
     lunchStart: '12:00',
     lunchEnd: '13:30'
 };
-const STORAGE_KEY = 'salaryCalcV2';
+const STORAGE_KEY = 'salaryCalcV3';
 
 /* ================== 状态 ================== */
 let state = {
     settings: { ...DEFAULT_SETTINGS },
     history: [],
-    slackSeconds: 0,          // 今日已累计摸鱼秒数
-    slackStartTime: null,     // 当前摸鱼开始的时间戳
+    slackSeconds: 0,
+    slackStartTime: null,
     isSlacking: false,
-    isEndedToday: false,
-    finalWorkedSeconds: null, // 点击"今日结束"后冻结的工作秒数
+    isEndedToday: false,      // 是否已下班
+    finalWorkedSeconds: null,
     currentWorkedSeconds: 0,
     todayDate: null,
     lastActiveDate: null
@@ -275,7 +276,6 @@ function formatTime(sec) {
     return `${pad(h)}:${pad(m)}:${pad(s)}`;
 }
 
-/* 标准工作时长（秒）：(午休开始 - 上班) + (下班 - 午休结束) */
 function getStandardWorkSeconds() {
     const s = state.settings;
     const start = timeToSeconds(s.workStart);
@@ -285,7 +285,6 @@ function getStandardWorkSeconds() {
     return Math.max(1, (ls - start) + (end - le));
 }
 
-/* 计算某时刻今日已工作秒数（自动扣除午休，封顶在下班时间） */
 function calcWorkedSeconds(now) {
     const s = state.settings;
     const nowSec = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
@@ -299,17 +298,14 @@ function calcWorkedSeconds(now) {
     const effectiveNow = Math.min(nowSec, endSec);
     let worked = 0;
 
-    // 上午段
     const morningEnd = Math.min(effectiveNow, lsSec);
     if (morningEnd > startSec) worked += morningEnd - startSec;
 
-    // 下午段
     if (effectiveNow > leSec) worked += effectiveNow - leSec;
 
     return worked;
 }
 
-/* 当前摸鱼总秒数 */
 function getSlackSeconds(now) {
     let total = state.slackSeconds;
     if (state.isSlacking && state.slackStartTime) {
@@ -347,7 +343,6 @@ function load() {
 }
 
 /* ================== 补录逻辑 ================== */
-/* 昨天忘记点"结束"，第二天打开时自动补一条"按时上下班"的记录 */
 function checkMissedDays() {
     const today = getDateStr(new Date());
     const last = state.lastActiveDate;
@@ -361,10 +356,9 @@ function checkMissedDays() {
     const todayD = new Date(today + 'T00:00:00');
     const diffDays = Math.round((todayD - lastD) / 86400000);
 
-    // 仅当"上次活跃日 = 昨天"时才补录
     if (diffDays === 1) {
         if (!state.history.some(r => r.date === last)) {
-            const day = lastD.getDay(); // 0=周日, 6=周六
+            const day = lastD.getDay();
             if (day >= 1 && day <= 5) {
                 pushAutoRecord(last);
             }
@@ -373,7 +367,6 @@ function checkMissedDays() {
     state.lastActiveDate = today;
 }
 
-/* 生成一条标准工作日记录 */
 function pushAutoRecord(dateStr) {
     const standardSec = getStandardWorkSeconds();
     const perSec = state.settings.dailySalary / standardSec;
@@ -425,7 +418,7 @@ function renderInfoBox() {
         <span>☕ 午休时间：${s.lunchStart} - ${s.lunchEnd}（暂停统计）</span><br>
         <span>⏱️ 标准工作时长：<b>${h} 小时</b>（${m} 分钟）</span><br>
         <span>💡 摸鱼期间正常计算薪资</span><br>
-        <span>🚀 忘记点结束默认无加班，按标准时间补录</span>
+        <span>🚀 忘记点下班默认无加班，按标准时间补录</span>
     `;
 }
 
@@ -461,14 +454,12 @@ function renderUI(now) {
     const s = state.settings;
     const perSec = s.dailySalary / getStandardWorkSeconds();
 
-    // 今日已工作秒数
     const workedSec = state.isEndedToday && state.finalWorkedSeconds != null
         ? state.finalWorkedSeconds
         : calcWorkedSeconds(now);
     state.currentWorkedSeconds = workedSec;
 
     const slackSec = getSlackSeconds(now);
-
     const earned = workedSec * perSec;
     const slackEarned = slackSec * perSec;
     const hourly = perSec * 3600;
@@ -481,37 +472,27 @@ function renderUI(now) {
     els.slackTime.textContent = formatTime(slackSec);
     els.slackEarned.textContent = `¥${slackEarned.toFixed(2)}`;
 
-    // 当前时间 / 距离下班
     const nowSec = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
     els.currentTime.textContent = formatTime(nowSec);
     const endSec = timeToSeconds(s.workEnd);
     els.timeToOff.textContent = nowSec < endSec ? formatTime(endSec - nowSec) : '已下班';
 
-    // 状态
     const startSec = timeToSeconds(s.workStart);
     const lsSec = timeToSeconds(s.lunchStart);
     const leSec = timeToSeconds(s.lunchEnd);
 
     if (state.isEndedToday) {
         els.statusBadge.className = 'status-badge ended';
-        els.statusText.textContent = '今日已结束';
-        els.slackBtn.disabled = true;
-        els.endBtn.disabled = true;
+        els.statusText.textContent = '已下班（点击下方可恢复）';
     } else if (nowSec < startSec) {
         els.statusBadge.className = 'status-badge before';
         els.statusText.textContent = '未到上班时间';
-        els.slackBtn.disabled = true;
-        els.endBtn.disabled = false;
     } else if (nowSec >= lsSec && nowSec < leSec) {
         els.statusBadge.className = 'status-badge lunch';
         els.statusText.textContent = '午休中（暂停统计）';
-        els.slackBtn.disabled = false;
-        els.endBtn.disabled = false;
     } else {
         els.statusBadge.className = 'status-badge working';
         els.statusText.textContent = `工作中（${formatTime(nowSec)}）`;
-        els.slackBtn.disabled = false;
-        els.endBtn.disabled = false;
     }
 }
 
@@ -520,10 +501,8 @@ function tick() {
     const now = new Date();
     const today = getDateStr(now);
 
-    // 跨天处理
     if (state.todayDate !== today) {
         if (state.todayDate && !state.isEndedToday) {
-            // 昨天忘了点"结束" → 补录标准工作日
             if (!state.history.some(r => r.date === state.todayDate)) {
                 pushAutoRecord(state.todayDate);
             }
@@ -534,10 +513,16 @@ function tick() {
         state.slackSeconds = 0;
         state.slackStartTime = null;
         state.isSlacking = false;
+
+        // 跨天重置按钮状态
         els.slackBtn.classList.remove('active');
         els.slackBtn.textContent = '🐟 开始摸鱼';
         els.slackBtn.disabled = false;
+        els.endBtn.textContent = '🚪 下班';
+        els.endBtn.style.background = '#e53935';
+        els.endBtn.onclick = endDay;
         els.endBtn.disabled = false;
+        
         renderHistory();
     }
 
@@ -552,7 +537,6 @@ function toggleSlack() {
     const now = Date.now();
 
     if (state.isSlacking) {
-        // 结束摸鱼
         if (state.slackStartTime) {
             state.slackSeconds += Math.floor((now - state.slackStartTime) / 1000);
         }
@@ -569,11 +553,14 @@ function toggleSlack() {
     save();
 }
 
+/* 下班 */
 function endDay() {
     if (state.isEndedToday) return;
-    const now = new Date();
 
-    // 若还在摸鱼，先结算
+    // 增加确认，防止误触
+    if (!confirm('确定要下班了吗？下班后将停止今日计时。')) return;
+
+    const now = new Date();
     if (state.isSlacking && state.slackStartTime) {
         state.slackSeconds += Math.floor((Date.now() - state.slackStartTime) / 1000);
         state.slackStartTime = null;
@@ -585,13 +572,11 @@ function endDay() {
     const perSec = state.settings.dailySalary / getStandardWorkSeconds();
     const salary = workedSec * perSec;
 
-    // 判断是否加班
     const nowSec = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
     const endSec = timeToSeconds(state.settings.workEnd);
     const overtimeSec = Math.max(0, nowSec - endSec);
 
     const dateStr = getDateStr(now);
-    // 若当天已有记录（比如自动补录过），先删除再添加
     state.history = state.history.filter(r => r.date !== dateStr);
 
     state.history.push({
@@ -607,12 +592,40 @@ function endDay() {
     state.isEndedToday = true;
     state.finalWorkedSeconds = workedSec;
 
+    // 更改按钮状态为“恢复上班”
     els.slackBtn.disabled = true;
-    els.endBtn.disabled = true;
+    els.slackBtn.classList.remove('active');
+    els.endBtn.disabled = false;
+    els.endBtn.textContent = '🔄 恢复上班';
+    els.endBtn.style.background = '#1976d2'; // 变成蓝色
+    els.endBtn.onclick = resumeWork; // 变更点击事件
 
     save();
     renderHistory();
     renderUI(now);
+}
+
+/* 恢复上班（撤销误触） */
+function resumeWork() {
+    if (!state.isEndedToday) return;
+    if (!confirm('确定要恢复上班吗？刚刚生成的下班记录会被撤销。')) return;
+
+    const today = getDateStr(new Date());
+    // 移除刚才下班生成的记录
+    state.history = state.history.filter(r => r.date !== today);
+
+    state.isEndedToday = false;
+    state.finalWorkedSeconds = null;
+
+    // 恢复按钮状态
+    els.slackBtn.disabled = false;
+    els.endBtn.textContent = '🚪 下班';
+    els.endBtn.style.background = '#e53935';
+    els.endBtn.onclick = endDay;
+
+    save();
+    renderHistory();
+    renderUI(new Date());
 }
 
 /* ================== 历史记录编辑 / 删除 ================== */
@@ -685,13 +698,11 @@ function fillInputs() {
 function init() {
     load();
 
-    // 首次使用默认设置
     if (!state.todayDate) {
         state.todayDate = getDateStr(new Date());
         state.lastActiveDate = state.todayDate;
     }
 
-    // 检查昨天是否忘记点"结束"
     checkMissedDays();
 
     fillInputs();
@@ -699,11 +710,18 @@ function init() {
     renderHistory();
     bindSettings();
 
-    // 每秒刷新
+    // 如果之前是已下班状态（比如刷新页面），恢复按钮状态
+    if (state.isEndedToday) {
+        els.slackBtn.disabled = true;
+        els.endBtn.disabled = false;
+        els.endBtn.textContent = '🔄 恢复上班';
+        els.endBtn.style.background = '#1976d2';
+        els.endBtn.onclick = resumeWork;
+    }
+
     tick();
     setInterval(tick, 1000);
 
-    // 页面关闭前保存
     window.addEventListener('beforeunload', save);
 }
 
